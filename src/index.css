@@ -1,1 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
+:root {
+  --font-ar: "Noto Kufi Arabic", "Segoe UI", Arial, sans-serif;
+  --font-en: "Poppins", "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-en);
+}
+
+:lang(en),
+[dir='ltr'] {
+  font-family: var(--font-en);
+}
+
+:lang(ar),
+[dir='rtl'] {
+  font-family: var(--font-ar);
+}
+
+:lang(ar) {
+  font-family: var(--font-ar);
+}
+
+:lang(en) {
+  font-family: var(--font-en);
+}
+
+:lang(ar),
+main[lang='ar'],
+[dir='rtl'] {
+  font-family: var(--font-ar);
+}
+
+body {
+  font-family: var(--font-en);
+}

@@ -1,0 +1,317 @@
+.login-template {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(520px, 1fr) minmax(420px, 1fr);
+  color: #fff;
+  background: #f3f6f7;
+  font-family: "Inter";
+}
+
+.login-template-ar {
+  font-family: "Noto Kufi Arabic";
+}
+
+.login-template-en {
+  font-family: "Inter";
+}
+
+.login-left-panel {
+  background-image: url('../../assets/dark background with pattern.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+  box-sizing: border-box;
+}
+
+.login-right-panel {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(24, 70, 120, 0.06), transparent 20%),
+    radial-gradient(circle at 20% 80%, rgba(24, 70, 120, 0.05), transparent 22%),
+    #f3f6f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.login-template-en .login-left-panel {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.login-template-en .login-right-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.login-template-ar .login-left-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.login-template-ar .login-right-panel {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.login-form-wrap {
+  width: min(460px, calc(100% - 48px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.login-logo-wrap {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.login-logo-image {
+  width: 270px;
+  height: 270px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(24, 70, 120, 0.14));
+}
+
+.login-card {
+  width: min(440px, 100%);
+  padding: 30px 28px;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(24, 70, 120, 0.10);
+  box-shadow: 0 16px 42px rgba(20, 54, 74, 0.16), inset 0 0 0 1px rgba(255,255,255,0.9);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-header h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.85rem, 2vw, 2rem);
+  color: #184678;
+  font-family: inherit;
+  font-weight: 700;
+  line-height: 1.7;
+  letter-spacing: -0.02em;
+}
+
+.login-header p {
+  margin: 0;
+  color: #59636f;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #184678;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.text-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #bfd0dd;
+  background: #f8fbfd;
+  color: #1f2937;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease, transform 220ms ease;
+}
+
+.password-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  padding-right: 84px;
+}
+
+.password-visibility-button {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #184678;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-template-ar .password-visibility-button {
+  right: auto;
+  left: 12px;
+}
+
+.login-template-en .password-visibility-button {
+  right: 12px;
+  left: auto;
+}
+
+.login-template-ar .password-input {
+  padding-right: 14px;
+  padding-left: 84px;
+}
+
+.login-template-en .password-input {
+  padding-right: 84px;
+  padding-left: 14px;
+}
+
+.password-visibility-button:hover {
+  background: rgba(24, 70, 120, 0.08);
+}
+
+.password-visibility-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  color: #184678;
+}
+
+.password-visibility-icon path,
+.password-visibility-icon circle {
+  stroke: currentColor;
+}
+
+.text-input::placeholder {
+  color: #8093a8;
+}
+
+.text-input:focus {
+  border-color: #184678;
+  box-shadow: 0 0 0 2px rgba(24, 70, 120, 0.12);
+}
+
+.login-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.login-button {
+  min-width: 180px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #184678, #123b62);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 22px rgba(24, 70, 120, 0.22);
+  transition: transform 240ms ease, box-shadow 240ms ease, background 240ms ease, filter 240ms ease;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #225d95, #184678);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(24, 70, 120, 0.30);
+  filter: saturate(1.08);
+}
+
+.login-button:focus-visible {
+  outline: 3px solid rgba(24, 70, 120, 0.25);
+  outline-offset: 3px;
+}
+
+.login-button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 7px 16px rgba(24, 70, 120, 0.26);
+  background: linear-gradient(135deg, #123b62, #102f4e);
+}
+
+.language-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 3;
+  min-width: 130px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.85);
+  background: linear-gradient(135deg, #2cafb9, #064d54);
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.language-button-ar {
+  font-family: var(--font-ar);
+}
+
+.language-button-en {
+  font-family: var(--font-en);
+}
+
+.language-button:hover {
+  background: linear-gradient(135deg, #066a69, #2cafb9);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+}
+
+@media (max-width: 900px) {
+  .login-template {
+    grid-template-columns: 1fr;
+  }
+
+  .login-left-panel,
+  .login-right-panel {
+    min-height: auto;
+  }
+}
