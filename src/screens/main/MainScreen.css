@@ -1,0 +1,141 @@
+.main-page {
+  min-height: 100vh;
+  display: flex;
+  background: #f7f8fa;
+  color: #172033;
+  font-family: Inter, 'Segoe UI', Arial, sans-serif;
+}
+
+.main-sidebar {
+  width: 280px;
+  background: #172033;
+  color: #ffffff;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.main-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.main-sidebar-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #d6b16b;
+  color: #172033;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.main-sidebar-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.main-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.main-sidebar-link {
+  padding: 12px 14px;
+  border-radius: 8px;
+  color: #d7dcea;
+  font-size: 15px;
+}
+
+.main-sidebar-link-active {
+  color: #172033;
+  background: #f5e7cb;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.main-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.main-kicker {
+  color: #8590a5;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.main-title {
+  margin: 8px 0 0;
+  font-size: clamp(32px, 3vw, 44px);
+  color: #172033;
+}
+
+.logout-button {
+  background: #172033;
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.main-placeholder-panel {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.main-placeholder-card {
+  width: min(560px, 100%);
+  padding: 56px 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(23, 32, 51, 0.10);
+  text-align: center;
+}
+
+.main-placeholder-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #d6b16b;
+  color: #172033;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.main-placeholder-card h2 {
+  font-size: 30px;
+  margin: 22px 0 10px;
+  color: #172033;
+}
+
+.main-placeholder-card p {
+  margin: 0;
+  color: #526071;
+  font-size: 16px;
+}
+
+.main-placeholder-meta {
+  margin-top: 12px !important;
+  color: #9aa2b3 !important;
+}

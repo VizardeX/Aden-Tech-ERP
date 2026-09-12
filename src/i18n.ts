@@ -1,28 +1,29 @@
+
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 const resources = {
   en: {
     translation: {
-      username: 'Username',
+      userID: 'User ID',
       password: 'Password',
       login: 'Login',
       forgotPassword: 'Forgot password?',
-      enterUsernamePassword: 'Please enter your username and password to login',
+      enterUserIDPassword: 'Please enter your user ID and password to login',
       loginToAccount: 'Login to account',
-      placeholderUsername: 'user',
+      placeholderUserID: '0',
       placeholderPassword: '••••••••',
     },
   },
   ar: {
     translation: {
-      username: 'اسم المستخدم',
+      userID: 'معرف المستخدم',
       password: 'كلمة السر',
       login: 'الدخول',
       forgotPassword: 'نسيت كلمة المرور؟',
-      enterUsernamePassword: 'الرجاء إدخال اسم المستخدم وكلمة السر للدخول',
+      enterUserIDPassword: 'الرجاء إدخال معرف المستخدم وكلمة السر للدخول',
       loginToAccount: 'الدخول للحساب',
-      placeholderUsername: 'مستخدم',
+      placeholderUserID: '0',
       placeholderPassword: '••••••••',
     },
   },

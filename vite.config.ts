@@ -5,7 +5,14 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    host: true, 
-    port: 5173
-  }
+    host: true,
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'https://erpapi.adt-labs.com',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
 import mainLogo from '../../assets/MainLogo.png'
 import './LoginScreen.css'
 import { useTranslation } from 'react-i18next'
@@ -6,16 +7,92 @@ import { useTranslation } from 'react-i18next'
 type LoginScreenProps = {
   language: 'en' | 'ar'
   onSwitchLanguage: () => void
+  onLoginSuccess: (email: string) => void
 }
 
-function LoginScreen({ language, onSwitchLanguage }: LoginScreenProps) {
+function LoginScreen({ language, onSwitchLanguage, onLoginSuccess }: LoginScreenProps) {
   const { t, i18n } = useTranslation()
   const isArabic = language === 'ar'
   const [showPassword, setShowPassword] = useState(false)
+  const [userID, setUserID] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     i18n.changeLanguage(language)
   }, [language, i18n])
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setError('')
+
+    if (!userID.trim() || !password.trim()) {
+      setError('Please enter your user ID and password.')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const parsedUserID = Number(userID)
+
+      if (!Number.isInteger(parsedUserID)) {
+        setError('The user ID must be a valid integer.')
+        return
+      }
+
+      const emailLookupResponse = await fetch('/api/v1/Auth/getUserEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: String(parsedUserID),
+      })
+
+      const emailLookupText = await emailLookupResponse.text()
+
+      if (!emailLookupResponse.ok) {
+        setError(`Unable to locate user email: ${emailLookupText || emailLookupResponse.statusText}`)
+        return
+      }
+
+      const emailLookupBody = JSON.parse(emailLookupText)
+
+      if (!emailLookupBody?.emailAddress) {
+        setError(emailLookupBody?.message || 'Unable to find the user email.')
+        return
+      }
+
+      const email = emailLookupBody.emailAddress
+
+      const loginResponse = await fetch('/api/v1/Auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          userAgentInfo: 'string',
+          userIPInfo: 'string',
+        }),
+      })
+
+      const loginText = await loginResponse.text()
+
+      if (!loginResponse.ok) {
+        setError(`Login failed: ${loginText || loginResponse.statusText}`)
+        return
+      }
+
+      onLoginSuccess(email)
+    } catch {
+      setError('Unable to reach the login service.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <main className={`login-template ${isArabic ? 'login-template-ar' : 'login-template-en'}`} dir={isArabic ? 'rtl' : 'ltr'} lang={isArabic ? 'ar' : 'en'}>
@@ -41,15 +118,23 @@ function LoginScreen({ language, onSwitchLanguage }: LoginScreenProps) {
           <section className="login-card">
             <div className="login-header">
               <h1>{t('loginToAccount')}</h1>
-              <p>{t('enterUsernamePassword')}</p>
+              <p>{t('enterUserIDPassword')}</p>
             </div>
 
-            <form className="login-form">
+            <form className="login-form" onSubmit={handleLogin}>
               <div className="form-field">
                 <label className="field-label" htmlFor={isArabic ? 'email-ar' : 'email-en'}>
-                  {t('username')}
+                  {t('userID')}
                 </label>
-                <input className="text-input" type="text" id={isArabic ? 'email-ar' : 'email-en'} name="email" placeholder={t('placeholderUsername')} />
+                <input
+                  className="text-input"
+                  type="text"
+                  id={isArabic ? 'email-ar' : 'email-en'}
+                  name="userID"
+                  placeholder={t('placeholderUserID')}
+                  value={userID}
+                  onChange={(event) => setUserID(event.target.value)}
+                />
               </div>
 
               <div className="form-field">
@@ -63,6 +148,8 @@ function LoginScreen({ language, onSwitchLanguage }: LoginScreenProps) {
                     id={isArabic ? 'password-ar' : 'password-en'}
                     name="password"
                     placeholder={t('placeholderPassword')}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
                   />
                   <button
                     className="password-visibility-button"
@@ -84,6 +171,8 @@ function LoginScreen({ language, onSwitchLanguage }: LoginScreenProps) {
                 </div>
               </div>
 
+              {error && <div className="login-error">{error}</div>}
+
               <div className="forgot-password-row">
                 <button className="forgot-password-button" type="button">
                   {t('forgotPassword')}
@@ -91,8 +180,8 @@ function LoginScreen({ language, onSwitchLanguage }: LoginScreenProps) {
               </div>
 
               <div className="login-actions">
-                <button className="login-button" type="submit">
-                  {t('login')}
+                <button className="login-button" type="submit" disabled={isLoading}>
+                  {isLoading ? 'Loading...' : t('login')}
                 </button>
               </div>
             </form>
