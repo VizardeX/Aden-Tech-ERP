@@ -84,6 +84,12 @@ function LoginScreen({ language, onSwitchLanguage }: LoginScreenProps) {
                 </div>
               </div>
 
+              <div className="forgot-password-row">
+                <button className="forgot-password-button" type="button">
+                  {t('forgotPassword')}
+                </button>
+              </div>
+
               <div className="login-actions">
                 <button className="login-button" type="submit">
                   {t('login')}

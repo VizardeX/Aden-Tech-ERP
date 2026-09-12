@@ -232,6 +232,41 @@
   box-shadow: 0 0 0 2px rgba(24, 70, 120, 0.12);
 }
 
+.forgot-password-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: -4px 0 10px;
+}
+
+.login-template-ar .forgot-password-row {
+  justify-content: flex-start;
+}
+
+.forgot-password-button {
+  border: none;
+  background: transparent;
+  color: #184678;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 220ms ease, transform 220ms ease;
+}
+
+.forgot-password-button:hover {
+  color: #0f5c9b;
+  transform: translateY(-1px);
+}
+
+.forgot-password-button:focus-visible {
+  outline: 2px solid rgba(24, 70, 120, 0.3);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
 .login-actions {
   display: flex;
   justify-content: center;
