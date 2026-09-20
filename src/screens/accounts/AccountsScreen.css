@@ -1,0 +1,344 @@
+.accounts-screen {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.accounts-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.accounts-eyebrow,
+.accounts-panel-label {
+  color: #a4773b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.accounts-header h1,
+.accounts-panel-heading h2,
+.account-name-block h3 {
+  margin: 0;
+  color: #243142;
+}
+
+.accounts-header h1 {
+  margin-top: 5px;
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.accounts-header p {
+  margin: 8px 0 0;
+  color: #778393;
+  font-size: 13px;
+}
+
+.accounts-create-button,
+.account-edit-button,
+.account-deactivate-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.accounts-create-button {
+  background: #a87536;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.accounts-create-button:hover {
+  background: #8d612d;
+}
+
+.accounts-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.85fr) minmax(380px, 1.15fr);
+  gap: 20px;
+  direction: rtl;
+}
+
+.accounts-tree-panel,
+.account-details-panel {
+  min-width: 0;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e7ec;
+  border-radius: 6px;
+  direction: rtl;
+}
+
+.accounts-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.accounts-panel-heading h2 {
+  margin-top: 4px;
+  font-size: 18px;
+}
+
+.accounts-count {
+  padding: 5px 9px;
+  border-radius: 4px;
+  background: #f4ecdf;
+  color: #96672d;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.accounts-select-label {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 24px;
+  color: #455365;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.accounts-select-label input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid #cfd7e0;
+  border-radius: 5px;
+  outline: 0;
+  color: #263445;
+  background: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.accounts-select-label input {
+  cursor: text;
+}
+
+.accounts-select-label input:focus {
+  border-color: #aa7839;
+  box-shadow: 0 0 0 3px rgba(170, 120, 57, 0.12);
+}
+
+.accounts-combobox-field {
+  position: relative;
+  margin-top: 24px;
+}
+
+.accounts-combobox-field .accounts-select-label {
+  margin-top: 0;
+}
+
+.accounts-combobox-options {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 5px;
+  background: #ffffff;
+  border: 1px solid #d5dce4;
+  border-radius: 5px;
+  box-shadow: 0 12px 24px rgba(36, 49, 66, 0.14);
+}
+
+.accounts-combobox-option {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 10px 11px;
+  border: 0;
+  border-radius: 4px;
+  color: #334154;
+  background: transparent;
+  font: inherit;
+  text-align: right;
+  cursor: pointer;
+}
+
+.accounts-combobox-option:hover,
+.accounts-combobox-option-selected {
+  background: #faf4ea;
+}
+
+.accounts-combobox-option span {
+  color: #a4773b;
+  font-family: var(--font-en);
+  font-size: 11px;
+  direction: ltr;
+}
+
+.accounts-combobox-option strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.accounts-combobox-empty {
+  margin: 10px;
+  color: #7d8997;
+  font-size: 12px;
+}
+
+.accounts-message {
+  margin: 25px 0 0;
+  color: #7d8997;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.accounts-message-error {
+  color: #b34843;
+}
+
+.account-details-icon {
+  color: #b78340;
+  font-size: 22px;
+}
+
+.account-name-block {
+  margin: 24px 0 22px;
+  padding: 16px;
+  background: #faf7f2;
+  border-right: 3px solid #b78340;
+}
+
+.account-name-block span {
+  color: #a4773b;
+  font-family: var(--font-en);
+  font-size: 12px;
+  direction: ltr;
+  unicode-bidi: plaintext;
+}
+
+.account-name-block h3 {
+  margin-top: 5px;
+  font-size: 20px;
+}
+
+.account-details-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 20px;
+  margin: 0;
+}
+
+.account-details-list div {
+  padding: 13px 0;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.account-details-list dt {
+  color: #8a95a3;
+  font-size: 11px;
+}
+
+.account-details-list dd {
+  margin: 4px 0 0;
+  color: #334154;
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.account-children-section {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f3;
+}
+
+.account-children-section h3 {
+  margin: 0 0 10px;
+  color: #455365;
+  font-size: 13px;
+}
+
+.account-children-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #536071;
+  font-size: 13px;
+}
+
+.account-children-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 4px;
+  background: #faf7f2;
+}
+
+.account-children-list li span {
+  color: #b78340;
+  font-family: var(--font-en);
+}
+
+.account-details-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.account-edit-button {
+  background: #263547;
+  color: #ffffff;
+}
+
+.account-deactivate-button {
+  background: #ffffff;
+  border: 1px solid #d7a5a2;
+  color: #a5423d;
+}
+
+@media (max-width: 760px) {
+  .accounts-header {
+    flex-direction: column;
+  }
+
+  .accounts-create-button {
+    width: 100%;
+  }
+
+  .accounts-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .accounts-tree-panel,
+  .account-details-panel {
+    padding: 18px;
+  }
+
+  .account-details-list {
+    grid-template-columns: 1fr;
+  }
+
+  .account-details-actions {
+    flex-direction: column;
+  }
+}
