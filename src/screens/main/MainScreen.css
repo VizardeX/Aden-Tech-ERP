@@ -70,6 +70,12 @@
   gap: 16px;
 }
 
+.main-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .main-kicker {
   color: #8590a5;
   text-transform: uppercase;
@@ -91,6 +97,22 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+}
+
+.refresh-token-button {
+  background: #ffffff;
+  color: #172033;
+  border: 1px solid #d6b16b;
+  padding: 11px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.refresh-token-button:disabled,
+.logout-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .main-placeholder-panel {
@@ -138,4 +160,9 @@
 .main-placeholder-meta {
   margin-top: 12px !important;
   color: #9aa2b3 !important;
+}
+
+.refresh-token-error {
+  margin-top: 18px !important;
+  color: #b42318 !important;
 }

@@ -86,6 +86,17 @@ function LoginScreen({ language, onSwitchLanguage, onLoginSuccess }: LoginScreen
         return
       }
 
+      const loginBody = JSON.parse(loginText)
+
+      if (!loginBody?.token) {
+        setError(loginBody?.message || 'Login succeeded without an authentication token.')
+        return
+      }
+
+      document.cookie = `authToken=${encodeURIComponent(loginBody.token)}; Path=/; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`
+      if (loginBody.refreshToken) {
+        document.cookie = `refreshToken=${encodeURIComponent(loginBody.refreshToken)}; Path=/; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`
+      }
       onLoginSuccess(email)
     } catch {
       setError('Unable to reach the login service.')

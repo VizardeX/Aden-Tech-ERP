@@ -8,8 +8,14 @@ function App() {
   const [currentScreen, setCurrentScreen] = useState<'login' | 'main'>('login')
   const [loggedInEmail, setLoggedInEmail] = useState('')
 
+  const handleLogout = () => {
+    document.cookie = 'authToken=; Max-Age=0; Path=/'
+    document.cookie = 'refreshToken=; Max-Age=0; Path=/'
+    setCurrentScreen('login')
+  }
+
   if (currentScreen === 'main') {
-    return <MainScreen loggedInEmail={loggedInEmail} onLogout={() => setCurrentScreen('login')} />
+    return <MainScreen loggedInEmail={loggedInEmail} onLogout={handleLogout} />
   }
 
   return (
