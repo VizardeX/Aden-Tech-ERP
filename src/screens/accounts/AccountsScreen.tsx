@@ -179,6 +179,9 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
   const [editError, setEditError] = useState('')
   const [editForm, setEditForm] = useState<AccountForm | null>(null)
   const [editingAccountId, setEditingAccountId] = useState('')
+  const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false)
+  const [isDeactivating, setIsDeactivating] = useState(false)
+  const [deactivateError, setDeactivateError] = useState('')
   const [createForm, setCreateForm] = useState<AccountForm>({
     accountCode: '',
     accountNameEn: '',
@@ -398,6 +401,48 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
     }
   }
 
+  const openDeactivateDialog = () => {
+    setDeactivateError('')
+    setIsDeactivateDialogOpen(true)
+  }
+
+  const closeDeactivateDialog = () => {
+    if (!isDeactivating) {
+      setIsDeactivateDialogOpen(false)
+    }
+  }
+
+  const handleDeactivateAccount = async () => {
+    if (!selectedAccount || isDeactivating) {
+      return
+    }
+
+    setDeactivateError('')
+    setIsDeactivating(true)
+
+    try {
+      const response = await authenticatedFetch(`/api/v1/finance/Accounts/${selectedAccount.id}`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const responseText = await response.text()
+        throw new Error(responseText || `تعذر تعطيل الحساب (${response.status}).`)
+      }
+
+      setSelectedAccountId('')
+      await loadAccounts()
+      setIsDeactivateDialogOpen(false)
+    } catch (requestError) {
+      setDeactivateError(requestError instanceof Error ? requestError.message : 'تعذر تعطيل الحساب.')
+    } finally {
+      setIsDeactivating(false)
+    }
+  }
+
   const searchableAccounts = flattenAccounts(accounts)
   const selectedAccount = searchableAccounts.find((account) => account.id === selectedAccountId)
   const selectedAccountChildren = selectedAccount
@@ -543,7 +588,7 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
                 )}
                 <div className="account-details-actions">
                   <button type="button" className="account-edit-button" onClick={() => void openEditDialog(selectedAccount)}>تعديل الحساب</button>
-                  <button type="button" className="account-deactivate-button">تعطيل الحساب</button>
+                  <button type="button" className="account-deactivate-button" onClick={openDeactivateDialog}>تعطيل الحساب</button>
                 </div>
               </>
             ) : (
@@ -604,6 +649,31 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
                 <div className="account-dialog-actions"><button className="account-dialog-cancel" type="button" onClick={closeEditDialog}>إلغاء</button><button className="accounts-create-button" type="submit" disabled={isEditing}>{isEditing ? 'جارٍ الحفظ...' : 'حفظ التعديلات'}</button></div>
               </form>
             )}
+          </section>
+        </div>
+      )}
+
+      {isDeactivateDialogOpen && selectedAccount && (
+        <div className="account-dialog-backdrop" role="presentation" onMouseDown={closeDeactivateDialog}>
+          <section className="account-dialog account-confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="deactivate-account-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="account-dialog-header">
+              <div>
+                <span className="accounts-panel-label">تأكيد الإجراء</span>
+                <h2 id="deactivate-account-title">تعطيل الحساب</h2>
+              </div>
+              <button className="account-dialog-close" type="button" aria-label="إغلاق" onClick={closeDeactivateDialog}>×</button>
+            </div>
+            <p className="account-confirmation-message">
+              هل أنت متأكد من تعطيل الحساب «{selectedAccount.accountNameAr || selectedAccount.accountNameEn}»؟
+              لن يعود الحساب نشطاً بعد تنفيذ هذا الإجراء.
+            </p>
+            {deactivateError && <p className="accounts-message accounts-message-error" role="alert">{deactivateError}</p>}
+            <div className="account-dialog-actions">
+              <button className="account-dialog-cancel" type="button" onClick={closeDeactivateDialog}>إلغاء</button>
+              <button className="account-deactivate-confirm-button" type="button" onClick={() => void handleDeactivateAccount()} disabled={isDeactivating}>
+                {isDeactivating ? 'جارٍ التعطيل...' : 'تأكيد التعطيل'}
+              </button>
+            </div>
           </section>
         </div>
       )}

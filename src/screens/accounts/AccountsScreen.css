@@ -347,6 +347,23 @@
   color: #a5423d;
 }
 
+.account-confirmation-dialog {
+  width: min(500px, 100%);
+}
+
+.account-confirmation-message {
+  margin: 22px 0 0;
+  color: #536071;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.account-deactivate-confirm-button {
+  border: 1px solid #a5423d;
+  color: #ffffff;
+  background: #a5423d;
+}
+
 .account-dialog-backdrop {
   position: fixed;
   z-index: 20;
