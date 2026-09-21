@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import AppLayout from '../../components/AppLayout'
-import { authenticatedFetch } from '../../services/authService'
+import { authenticatedFetch, getUserID } from '../../services/authService'
 import './AccountsScreen.css'
 
 type Account = {
@@ -58,6 +58,20 @@ type AccountMetadata = {
 const accountsUrl = '/api/v1/finance/Accounts/tree'
 const accountsMetadataUrl = '/api/v1/finance/Accounts/accounts-metadata'
 const createAccountUrl = '/api/v1/finance/Accounts'
+
+type AccountForm = {
+  id?: string
+  accountCode: string
+  accountNameEn: string
+  accountNameAr: string
+  parentId: string
+  path?: string
+  depth?: number
+  accountType: string
+  isPostable: boolean
+  currencyCode: string
+  children?: unknown[]
+}
 
 function getAuthToken() {
   const tokenCookie = document.cookie
@@ -123,6 +137,30 @@ function getAccountChildren(account: Account, allAccounts: Account[]) {
   return [...account.children, ...relatedChildren]
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function getAccountDetails(responseBody: unknown, fallbackAccount: Account) {
+  let candidate: unknown = responseBody
+
+  if (Array.isArray(candidate)) {
+    candidate = candidate.find((item) => isRecord(item) && item.id === fallbackAccount.id)
+  } else if (isRecord(candidate)) {
+    candidate = candidate.data || candidate.result || candidate.account || candidate.item || candidate
+  }
+
+  if (!isRecord(candidate)) {
+    return fallbackAccount
+  }
+
+  return {
+    ...fallbackAccount,
+    ...candidate,
+    children: Array.isArray(candidate.children) ? candidate.children : fallbackAccount.children,
+  } as Account
+}
+
 function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: () => void }) {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState('')
@@ -131,12 +169,17 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [metadata, setMetadata] = useState<AccountMetadata | null>(null)
   const [isMetadataLoading, setIsMetadataLoading] = useState(false)
   const [metadataError, setMetadataError] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [createError, setCreateError] = useState('')
-  const [createForm, setCreateForm] = useState({
+  const [isEditing, setIsEditing] = useState(false)
+  const [editError, setEditError] = useState('')
+  const [editForm, setEditForm] = useState<AccountForm | null>(null)
+  const [editingAccountId, setEditingAccountId] = useState('')
+  const [createForm, setCreateForm] = useState<AccountForm>({
     accountCode: '',
     accountNameEn: '',
     accountNameAr: '',
@@ -220,8 +263,92 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
   }
 
   const closeCreateDialog = () => {
-    if (!isCreating) {
+    if (!isCreating && !isMetadataLoading) {
       setIsCreateDialogOpen(false)
+    }
+  }
+
+  const openEditDialog = async (account: Account) => {
+    setIsEditDialogOpen(true)
+    setEditingAccountId(account.id)
+    setMetadata(null)
+    setMetadataError('')
+    setEditError('')
+    setEditForm(null)
+    setIsMetadataLoading(true)
+
+    try {
+      const accountResponse = await authenticatedFetch(`/api/v1/finance/Accounts/tree/${account.id}`, {
+        headers: { Accept: 'application/json' },
+      })
+
+      if (!accountResponse.ok) {
+        throw new Error(`تعذر تحميل بيانات الحساب (${accountResponse.status}).`)
+      }
+
+      const accountResponseBody = await accountResponse.json() as unknown
+      const accountDetails = getAccountDetails(accountResponseBody, account)
+      setEditForm({
+        id: accountDetails.id,
+        accountCode: accountDetails.accountCode || '',
+        accountNameEn: accountDetails.accountNameEn || '',
+        accountNameAr: accountDetails.accountNameAr || '',
+        parentId: accountDetails.parentId || '',
+        path: accountDetails.path || '',
+        depth: accountDetails.depth || 0,
+        accountType: '',
+        isPostable: accountDetails.isPostable ?? true,
+        currencyCode: accountDetails.currencyCode || '',
+        children: accountDetails.children || [],
+      })
+    } catch (requestError) {
+      setMetadataError(requestError instanceof Error ? requestError.message : 'تعذر تحميل بيانات الحساب.')
+    } finally {
+      setIsMetadataLoading(false)
+    }
+  }
+
+  const closeEditDialog = () => {
+    if (!isEditing && !isMetadataLoading) {
+      setIsEditDialogOpen(false)
+    }
+  }
+
+  const handleEditAccount = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!editForm || !editingAccountId) {
+      return
+    }
+
+    setEditError('')
+    setIsEditing(true)
+
+    try {
+      const response = await authenticatedFetch(`/api/v1/finance/Accounts/${editingAccountId}`, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accountNameEn: editForm.accountNameEn,
+          accountNameAr: editForm.accountNameAr,
+          isActive: true,
+          userID: Number(getUserID()),
+        }),
+      })
+
+      if (!response.ok) {
+        const responseText = await response.text()
+        throw new Error(responseText || `تعذر تعديل الحساب (${response.status}).`)
+      }
+
+      await loadAccounts()
+      setIsEditDialogOpen(false)
+    } catch (requestError) {
+      setEditError(requestError instanceof Error ? requestError.message : 'تعذر تعديل الحساب.')
+    } finally {
+      setIsEditing(false)
     }
   }
 
@@ -238,10 +365,13 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...createForm,
-          accountType: Number(createForm.accountType),
+          accountCode: createForm.accountCode,
+          accountNameEn: createForm.accountNameEn,
+          accountNameAr: createForm.accountNameAr,
           parentId: createForm.parentId || null,
-          userID: 0,
+          accountType: Number(createForm.accountType),
+          isPostable: createForm.isPostable,
+          currencyCode: createForm.currencyCode,
         }),
       })
 
@@ -412,7 +542,7 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
                   </div>
                 )}
                 <div className="account-details-actions">
-                  <button type="button" className="account-edit-button">تعديل الحساب</button>
+                  <button type="button" className="account-edit-button" onClick={() => void openEditDialog(selectedAccount)}>تعديل الحساب</button>
                   <button type="button" className="account-deactivate-button">تعطيل الحساب</button>
                 </div>
               </>
@@ -447,6 +577,31 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
                 <label className="account-postable-field"><input type="checkbox" checked={createForm.isPostable} onChange={(event) => setCreateForm({ ...createForm, isPostable: event.target.checked })} /> قابل للترحيل</label>
                 {createError && <p className="accounts-message accounts-message-error" role="alert">{createError}</p>}
                 <div className="account-dialog-actions"><button className="account-dialog-cancel" type="button" onClick={closeCreateDialog}>إلغاء</button><button className="accounts-create-button" type="submit" disabled={isCreating}>{isCreating ? 'جارٍ الإنشاء...' : 'إنشاء الحساب'}</button></div>
+              </form>
+            )}
+          </section>
+        </div>
+      )}
+
+      {isEditDialogOpen && (
+        <div className="account-dialog-backdrop" role="presentation" onMouseDown={closeEditDialog}>
+          <section className="account-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-account-title" onMouseDown={(event) => event.stopPropagation()}>
+            <div className="account-dialog-header">
+              <div>
+                <span className="accounts-panel-label">الحسابات</span>
+                <h2 id="edit-account-title">تعديل الحساب</h2>
+              </div>
+              <button className="account-dialog-close" type="button" aria-label="إغلاق" onClick={closeEditDialog}>×</button>
+            </div>
+
+            {isMetadataLoading && <p className="accounts-message">جارٍ تحميل بيانات الحساب...</p>}
+            {metadataError && <p className="accounts-message accounts-message-error" role="alert">{metadataError}</p>}
+            {editForm && (
+              <form className="account-create-form" onSubmit={handleEditAccount}>
+                <label>اسم الحساب بالعربية<input required value={editForm.accountNameAr} onChange={(event) => setEditForm({ ...editForm, accountNameAr: event.target.value })} /></label>
+                <label>اسم الحساب بالإنجليزية<input required dir="ltr" value={editForm.accountNameEn} onChange={(event) => setEditForm({ ...editForm, accountNameEn: event.target.value })} /></label>
+                {editError && <p className="accounts-message accounts-message-error" role="alert">{editError}</p>}
+                <div className="account-dialog-actions"><button className="account-dialog-cancel" type="button" onClick={closeEditDialog}>إلغاء</button><button className="accounts-create-button" type="submit" disabled={isEditing}>{isEditing ? 'جارٍ الحفظ...' : 'حفظ التعديلات'}</button></div>
               </form>
             )}
           </section>

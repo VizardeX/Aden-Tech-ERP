@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import mainLogo from '../../assets/MainLogo.png'
 import './LoginScreen.css'
 import { useTranslation } from 'react-i18next'
+import { saveTokens, saveUserID } from '../../services/authService'
 
 type LoginScreenProps = {
   language: 'en' | 'ar'
@@ -93,10 +94,8 @@ function LoginScreen({ language, onSwitchLanguage, onLoginSuccess }: LoginScreen
         return
       }
 
-      document.cookie = `authToken=${encodeURIComponent(loginBody.token)}; Path=/; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`
-      if (loginBody.refreshToken) {
-        document.cookie = `refreshToken=${encodeURIComponent(loginBody.refreshToken)}; Path=/; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`
-      }
+      saveTokens({ token: loginBody.token, refreshToken: loginBody.refreshToken })
+      saveUserID(parsedUserID)
       onLoginSuccess(email)
     } catch {
       setError('Unable to reach the login service.')

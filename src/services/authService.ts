@@ -30,6 +30,14 @@ export function getRefreshToken() {
   return getCookie('refreshToken')
 }
 
+export function getUserID() {
+  return getCookie('userID')
+}
+
+export function saveUserID(userID: number) {
+  setCookie('userID', String(userID))
+}
+
 export function saveTokens(tokens: TokenResponse) {
   if (tokens.token) {
     setCookie('authToken', tokens.token)
@@ -42,6 +50,7 @@ export function saveTokens(tokens: TokenResponse) {
 export function clearAuthTokens() {
   document.cookie = 'authToken=; Max-Age=0; Path=/'
   document.cookie = 'refreshToken=; Max-Age=0; Path=/'
+  document.cookie = 'userID=; Max-Age=0; Path=/'
 }
 
 export async function refreshAccessToken() {
