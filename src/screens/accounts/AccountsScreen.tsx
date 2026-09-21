@@ -210,7 +210,13 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
 
     const loadedAccounts = responseBody as Account[]
     setAccounts(loadedAccounts)
-    setSelectedAccountId((currentId) => currentId || loadedAccounts[0]?.id || '')
+    setSelectedAccountId((currentId) => {
+      if (!currentId) {
+        return ''
+      }
+
+      return flattenAccounts(loadedAccounts).some((account) => account.id === currentId) ? currentId : ''
+    })
   }
 
   useEffect(() => {
@@ -617,7 +623,7 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
                 <label>اسم الحساب بالعربية<input required value={createForm.accountNameAr} onChange={(event) => setCreateForm({ ...createForm, accountNameAr: event.target.value })} /></label>
                 <label>اسم الحساب بالإنجليزية<input required dir="ltr" value={createForm.accountNameEn} onChange={(event) => setCreateForm({ ...createForm, accountNameEn: event.target.value })} /></label>
                 <label>نوع الحساب<select required value={createForm.accountType} onChange={(event) => setCreateForm({ ...createForm, accountType: event.target.value })}>{metadata.accountTypes.map((type) => <option key={type.value} value={type.value}>{type.name}</option>)}</select></label>
-                <label>الحساب الأب (اختياري)<select value={createForm.parentId} onChange={(event) => setCreateForm({ ...createForm, parentId: event.target.value })}><option value="">بدون حساب أب (حساب رئيسي)</option>{metadata.accounts.map((account) => <option key={account.id} value={account.id}>{account.code} - {account.name}</option>)}</select></label>
+                <label>الحساب الأب<select value={createForm.parentId} onChange={(event) => setCreateForm({ ...createForm, parentId: event.target.value })}><option value="">بدون حساب أب (حساب رئيسي)</option>{metadata.accounts.map((account) => <option key={account.id} value={account.id}>{account.code} - {account.name}</option>)}</select></label>
                 <label>العملة<select required value={createForm.currencyCode} onChange={(event) => setCreateForm({ ...createForm, currencyCode: event.target.value })}>{metadata.currencies.map((currency) => <option key={currency.code} value={currency.code}>{currency.name} ({currency.code})</option>)}</select></label>
                 <label className="account-postable-field"><input type="checkbox" checked={createForm.isPostable} onChange={(event) => setCreateForm({ ...createForm, isPostable: event.target.checked })} /> قابل للترحيل</label>
                 {createError && <p className="accounts-message accounts-message-error" role="alert">{createError}</p>}

@@ -13,7 +13,7 @@
 
 .accounts-eyebrow,
 .accounts-panel-label {
-  color: #a4773b;
+  color: #184678;
   font-size: 11px;
   font-weight: 700;
 }
@@ -53,13 +53,13 @@
 }
 
 .accounts-create-button {
-  background: #a87536;
+  background: #184678;
   color: #ffffff;
   font-weight: 700;
 }
 
 .accounts-create-button:hover {
-  background: #8d612d;
+  background: #2cafb9;
 }
 
 .accounts-layout {
@@ -96,8 +96,8 @@
 .accounts-count {
   padding: 5px 9px;
   border-radius: 4px;
-  background: #f4ecdf;
-  color: #96672d;
+  background: #e2f5f6;
+  color: #184678;
   font-size: 11px;
   white-space: nowrap;
 }
@@ -131,8 +131,8 @@
 }
 
 .accounts-select-label input:focus {
-  border-color: #aa7839;
-  box-shadow: 0 0 0 3px rgba(170, 120, 57, 0.12);
+  border-color: #2cafb9;
+  box-shadow: 0 0 0 3px rgba(44, 175, 185, 0.14);
 }
 
 .accounts-combobox-field {
@@ -210,19 +210,19 @@
 }
 
 .account-details-icon {
-  color: #b78340;
+  color: #2cafb9;
   font-size: 22px;
 }
 
 .account-name-block {
   margin: 24px 0 22px;
   padding: 16px;
-  background: #faf7f2;
-  border-right: 3px solid #b78340;
+  background: #eaf6f7;
+  border-right: 3px solid #2cafb9;
 }
 
 .account-name-block span {
-  color: #a4773b;
+  color: #184678;
   font-family: var(--font-en);
   font-size: 12px;
   direction: ltr;
@@ -285,7 +285,7 @@
 .account-children-list li {
   padding: 0;
   border-radius: 4px;
-  background: #faf7f2;
+  background: #eaf6f7;
 }
 
 .account-child-button {
@@ -305,13 +305,13 @@
 
 .account-child-button:hover,
 .account-child-button:focus-visible {
-  background: #f4ecdf;
+  background: #d9f1f2;
   outline: 0;
 }
 
 .account-child-button > span:first-child,
 .account-children-list li > span:first-child {
-  color: #b78340;
+  color: #2cafb9;
   font-family: var(--font-en);
 }
 
@@ -322,7 +322,7 @@
 }
 
 .account-child-label strong {
-  color: #a4773b;
+  color: #184678;
   font-family: var(--font-en);
   font-size: 11px;
   font-weight: 600;
@@ -337,7 +337,7 @@
 }
 
 .account-edit-button {
-  background: #263547;
+  background: #184678;
   color: #ffffff;
 }
 
@@ -442,8 +442,8 @@
 .account-create-form input:focus,
 .account-create-form select:focus {
   outline: 0;
-  border-color: #aa7839;
-  box-shadow: 0 0 0 3px rgba(170, 120, 57, 0.12);
+  border-color: #2cafb9;
+  box-shadow: 0 0 0 3px rgba(44, 175, 185, 0.14);
 }
 
 .account-postable-field {
@@ -456,7 +456,7 @@
 .account-postable-field input {
   width: 17px;
   height: 17px;
-  accent-color: #a87536;
+  accent-color: #2cafb9;
 }
 
 .account-dialog-actions {

@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
+import mainLogo from '../assets/MainLogo.png'
 import './AppLayout.css'
 
 type AppLayoutProps = {
@@ -17,16 +19,24 @@ const navigationItems = [
   { label: 'الإعدادات', icon: '⚙' },
 ]
 
-function AppLayout({ children, userName = 'مازن ق.', activeNavigation = 'لوحة التحكم', onLogout }: AppLayoutProps) {
+function AppLayout({ children, userName = '', activeNavigation = 'لوحة التحكم', onLogout }: AppLayoutProps) {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
   return (
-    <div className="app-layout" dir="rtl" lang="ar">
+    <div className={`app-layout${isSidebarCollapsed ? ' app-layout-sidebar-collapsed' : ''}`} dir="rtl" lang="ar">
       <header className="app-topbar">
         <div className="app-identity">
-          <button className="app-icon-button" type="button" aria-label="فتح القائمة">
+          <button
+            className="app-icon-button"
+            type="button"
+            aria-label={isSidebarCollapsed ? 'فتح القائمة' : 'طي القائمة'}
+            aria-expanded={!isSidebarCollapsed}
+            onClick={() => setIsSidebarCollapsed((currentState) => !currentState)}
+          >
             ☰
           </button>
-          <div className="app-logo" aria-hidden="true">A</div>
-          <span className="app-tenant-name">شركة عدن التقنية</span>
+          <img className="app-logo" src={mainLogo} alt="Aden Tech ERP" />
+          <span className="app-tenant-name">Aden Tech ERP</span>
         </div>
 
         <label className="app-search" aria-label="البحث">
@@ -35,14 +45,21 @@ function AppLayout({ children, userName = 'مازن ق.', activeNavigation = 'ل
         </label>
 
         <div className="app-toolbar-actions">
-          <button className="app-toolbar-button" type="button">ع / E</button>
+          <button className="app-language-button" type="button">English</button>
           <button className="app-toolbar-button app-notification-button" type="button" aria-label="الإشعارات">
-            ♧<span>3</span>
+            <svg className="app-notification-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+              <path d="M10 21h4" />
+            </svg>
           </button>
           <button className="app-user-menu" type="button" onClick={onLogout}>
-            <span className="app-user-avatar">م</span>
+            <span className="app-user-avatar" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="3.2" />
+                <path d="M5.5 20c.7-3.3 3-5 6.5-5s5.8 1.7 6.5 5" />
+              </svg>
+            </span>
             <span>{userName}</span>
-            <span aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
@@ -61,26 +78,10 @@ function AppLayout({ children, userName = 'مازن ق.', activeNavigation = 'ل
               </button>
             ))}
           </nav>
-          <button className="app-collapse-button" type="button">
-            <span aria-hidden="true">‹</span>
-            طي القائمة
-          </button>
         </aside>
 
         <main className="app-main">
-          <div className="app-breadcrumbs" aria-label="مسار الصفحة">
-            <span>الرئيسية</span>
-            <span aria-hidden="true">/</span>
-            <span>النظام المالي</span>
-            <span aria-hidden="true">/</span>
-            <strong>{activeNavigation}</strong>
-          </div>
           <div className="app-content">{children}</div>
-          <footer className="app-footer">
-            <span>إصدار التطبيق 1.4.0</span>
-            <span className="app-footer-status"><i aria-hidden="true" /> قاعدة البيانات متصلة</span>
-            <span>الخطة النشطة: Enterprise</span>
-          </footer>
         </main>
       </div>
     </div>

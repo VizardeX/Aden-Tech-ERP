@@ -7,7 +7,7 @@ type MainScreenProps = {
 }
 
 function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
-  return <AccountsScreen userName={loggedInEmail || 'مازن ق.'} onLogout={onLogout} />
+  return <AccountsScreen userName={loggedInEmail} onLogout={onLogout} />
 }
 
 export default MainScreen
