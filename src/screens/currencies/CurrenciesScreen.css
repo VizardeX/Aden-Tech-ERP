@@ -1,0 +1,195 @@
+.currencies-screen {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.currencies-panel {
+  width: 100%;
+}
+
+.account-create-form input.currency-read-only-field,
+.account-create-form input.currency-read-only-field:focus,
+.account-create-form input.currency-read-only-field:active {
+  border-color: #c5ccd3 !important;
+  background: #eef1f4 !important;
+  color: #7b8794 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+.currencies-heading {
+  display: flex;
+  align-items: center;
+}
+
+.currencies-heading {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.currencies-kicker {
+  margin: 0 0 8px;
+  color: #2cafb9;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.currencies-screen h1 {
+  margin: 0;
+  color: #184678;
+  margin-top: 5px;
+  color: #243142;
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.currencies-create-button,
+.currency-edit-button,
+.currency-deactivate-button {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.currencies-create-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid #184678;
+  border-radius: 5px;
+  background: #184678 !important;
+  color: #ffffff !important;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.currencies-create-button span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.currencies-create-button:hover {
+  background: #12375f;
+  transform: translateY(-1px);
+}
+
+.currencies-search-label {
+  margin-top: 24px;
+}
+
+.currencies-action-message,
+.currencies-state {
+  margin: 16px 0 0;
+  padding: 14px 16px;
+  border: 1px solid #c8dfe1;
+  background: #f0fafa;
+  color: #16757b;
+  font-size: 14px;
+}
+
+.currencies-state-error {
+  border-color: #edc4c0;
+  background: #fff5f4;
+  color: #b42318;
+}
+
+.currencies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.currencies-list-item {
+  padding: 16px;
+  border-radius: 4px;
+  background: #eaf6f7;
+  color: #536071;
+}
+
+.currencies-list-item:hover {
+  background: #d9f1f2;
+}
+
+.currency-name-block {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-right: 3px solid #2cafb9;
+  background: #ffffff;
+}
+
+.currency-name-block span {
+  color: #184678;
+  font-family: var(--font-en);
+  font-size: 12px;
+  direction: ltr;
+}
+
+.currency-name-block h3 {
+  margin: 5px 0 0;
+  color: #243142;
+  font-size: 17px;
+}
+
+.currency-details-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 20px;
+  margin: 0;
+}
+
+.currency-details-list div {
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(24, 70, 120, 0.12);
+}
+
+.currency-details-list dt {
+  color: #8a95a3;
+  font-size: 11px;
+}
+
+.currency-details-list dd {
+  margin: 4px 0 0;
+  color: #334154;
+  font-size: 13px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.currencies-list-item .account-details-actions {
+  margin-top: 18px;
+}
+
+.currencies-list-item .account-edit-button,
+.currencies-list-item .account-deactivate-button {
+  min-height: 38px;
+  font-size: 12px;
+}
+
+.currencies-code,
+.currencies-symbol {
+  color: #184678 !important;
+  font-weight: 700;
+  direction: ltr;
+  text-align: right;
+}
+
+@media (max-width: 620px) {
+  .currencies-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .currencies-create-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .currency-details-list {
+    grid-template-columns: 1fr;
+  }
+}

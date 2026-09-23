@@ -161,7 +161,15 @@ function getAccountDetails(responseBody: unknown, fallbackAccount: Account) {
   } as Account
 }
 
-function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: () => void }) {
+function AccountsScreen({
+  userName,
+  onLogout,
+  onNavigationChange,
+}: {
+  userName?: string
+  onLogout?: () => void
+  onNavigationChange?: (navigation: string) => void
+}) {
   const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedAccountId, setSelectedAccountId] = useState('')
   const [accountSearch, setAccountSearch] = useState('')
@@ -467,7 +475,13 @@ function AccountsScreen({ userName, onLogout }: { userName?: string; onLogout?: 
   }
 
   return (
-    <AppLayout userName={userName} activeNavigation="الحسابات" onLogout={onLogout}>
+    <AppLayout
+      userName={userName}
+      activeNavigation="الإعدادات"
+      activeSubNavigation="chartOfAccounts"
+      onNavigationChange={onNavigationChange}
+      onLogout={onLogout}
+    >
       <section className="accounts-screen" aria-labelledby="accounts-title">
         <header className="accounts-header">
           <div>

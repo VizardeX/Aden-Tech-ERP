@@ -7,20 +7,32 @@ type AppLayoutProps = {
   children: ReactNode
   userName?: string
   activeNavigation?: string
+  activeSubNavigation?: string
+  onNavigationChange?: (navigation: string) => void
   onLogout?: () => void
 }
 
 const navigationItems = [
   { label: 'لوحة التحكم', icon: '▦', active: true },
-  { label: 'الحسابات', icon: '♧' },
-  { label: 'العملات', icon: '◈' },
   { label: 'دفتر الأستاذ', icon: '▤' },
   { label: 'ميزان المراجعة', icon: '⚖' },
-  { label: 'الإعدادات', icon: '⚙' },
 ]
 
-function AppLayout({ children, userName = '', activeNavigation = 'لوحة التحكم', onLogout }: AppLayoutProps) {
+const settingsItems = [
+  { label: 'دليل الحسابات', value: 'chartOfAccounts' },
+  { label: 'العملات', value: 'currencies' },
+]
+
+function AppLayout({
+  children,
+  userName = '',
+  activeNavigation = 'لوحة التحكم',
+  activeSubNavigation = '',
+  onNavigationChange,
+  onLogout,
+}: AppLayoutProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(activeNavigation === 'الإعدادات')
 
   return (
     <div className={`app-layout${isSidebarCollapsed ? ' app-layout-sidebar-collapsed' : ''}`} dir="rtl" lang="ar">
@@ -72,11 +84,39 @@ function AppLayout({ children, userName = '', activeNavigation = 'لوحة ال�
                 className={`app-navigation-item${item.label === activeNavigation ? ' app-navigation-item-active' : ''}`}
                 type="button"
                 key={item.label}
+                onClick={() => onNavigationChange?.(item.label)}
               >
                 <span className="app-navigation-icon" aria-hidden="true">{item.icon}</span>
                 <span>{item.label}</span>
               </button>
             ))}
+            <button
+              className={`app-navigation-item${activeNavigation === 'الإعدادات' ? ' app-navigation-item-active' : ''}`}
+              type="button"
+              aria-expanded={isSettingsOpen}
+              onClick={() => setIsSettingsOpen((currentState) => !currentState)}
+            >
+              <span className="app-navigation-icon" aria-hidden="true">⚙</span>
+              <span>الإعدادات</span>
+              <span
+                className={`app-navigation-chevron${isSettingsOpen ? ' app-navigation-chevron-open' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+            {isSettingsOpen && (
+              <div className="app-navigation-submenu">
+                {settingsItems.map((item) => (
+                  <button
+                    className={`app-navigation-subitem${item.value === activeSubNavigation ? ' app-navigation-subitem-active' : ''}`}
+                    type="button"
+                    key={item.value}
+                    onClick={() => onNavigationChange?.(item.value)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </nav>
         </aside>
 

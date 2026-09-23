@@ -230,6 +230,55 @@
   box-shadow: inset -3px 0 #ffffff;
 }
 
+.app-navigation-chevron {
+  width: 8px;
+  height: 8px;
+  margin-right: auto;
+  border-right: 2px solid rgba(255, 255, 255, 0.78);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.78);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.app-navigation-item:hover .app-navigation-chevron {
+  border-color: #ffffff;
+}
+
+.app-navigation-chevron-open {
+  transform: rotate(225deg) translateY(-2px);
+}
+
+.app-navigation-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: -1px 0 4px;
+  padding: 2px 12px 2px 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.app-navigation-subitem {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  text-align: right;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.app-navigation-subitem:hover,
+.app-navigation-subitem-active {
+  background: rgba(44, 175, 185, 0.58);
+  color: #ffffff;
+}
+
 .app-navigation-icon {
   width: 20px;
   color: rgba(255, 255, 255, 0.72);
@@ -261,6 +310,10 @@
 }
 
 .app-layout-sidebar-collapsed .app-navigation-item > span:last-child {
+  display: none;
+}
+
+.app-layout-sidebar-collapsed .app-navigation-submenu {
   display: none;
 }
 
