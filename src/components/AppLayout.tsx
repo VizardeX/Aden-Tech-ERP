@@ -21,6 +21,7 @@ const navigationItems = [
 const settingsItems = [
   { label: 'دليل الحسابات', value: 'chartOfAccounts' },
   { label: 'العملات', value: 'currencies' },
+  { label: 'أسعار الصرف', value: 'exchangeRates' },
 ]
 
 function AppLayout({

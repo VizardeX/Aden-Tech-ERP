@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import AccountsScreen from '../accounts/AccountsScreen'
 import CurrenciesScreen from '../currencies/CurrenciesScreen'
+import ExchangeRatesScreen from '../exchange-rates/ExchangeRatesScreen'
 import './MainScreen.css'
 
 type MainScreenProps = {
@@ -9,9 +10,9 @@ type MainScreenProps = {
 }
 
 function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
-  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies'>('chartOfAccounts')
+  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates'>('chartOfAccounts')
   const handleNavigationChange = (navigation: string) => {
-    if (navigation === 'chartOfAccounts' || navigation === 'currencies') {
+    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates') {
       setCurrentScreen(navigation)
     }
   }
@@ -19,6 +20,16 @@ function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
   if (currentScreen === 'currencies') {
     return (
       <CurrenciesScreen
+        userName={loggedInEmail}
+        onLogout={onLogout}
+        onNavigationChange={handleNavigationChange}
+      />
+    )
+  }
+
+  if (currentScreen === 'exchangeRates') {
+    return (
+      <ExchangeRatesScreen
         userName={loggedInEmail}
         onLogout={onLogout}
         onNavigationChange={handleNavigationChange}
