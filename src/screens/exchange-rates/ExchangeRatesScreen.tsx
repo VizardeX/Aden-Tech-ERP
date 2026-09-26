@@ -66,10 +66,6 @@ function formatEffectiveDate(value: string) {
   }).format(date)
 }
 
-function formatOptionalDate(value: string | null) {
-  return value ? formatEffectiveDate(value) : 'غير محدد'
-}
-
 function ExchangeRatesScreen({ userName, onLogout, onNavigationChange }: ExchangeRatesScreenProps) {
   const [exchangeRates, setExchangeRates] = useState<ExchangeRate[]>([])
   const [currencies, setCurrencies] = useState<Currency[]>([])
@@ -299,8 +295,6 @@ function ExchangeRatesScreen({ userName, onLogout, onNavigationChange }: Exchang
                     <th scope="col">إلى العملة</th>
                     <th scope="col">سعر الصرف</th>
                     <th scope="col">تاريخ التفعيل</th>
-                    <th scope="col">من تاريخ</th>
-                    <th scope="col">إلى تاريخ</th>
                     <th scope="col">الإجراء</th>
                   </tr>
                 </thead>
@@ -311,8 +305,6 @@ function ExchangeRatesScreen({ userName, onLogout, onNavigationChange }: Exchang
                       <td>{exchangeRate.toCurrency}</td>
                       <td>{exchangeRate.rate}</td>
                       <td>{formatEffectiveDate(exchangeRate.effectiveDate)}</td>
-                      <td>{formatOptionalDate(exchangeRate.fromDate)}</td>
-                      <td>{formatOptionalDate(exchangeRate.toDate)}</td>
                       <td>
                         <button
                           className="exchange-rates-history-button"
@@ -434,8 +426,6 @@ function ExchangeRatesScreen({ userName, onLogout, onNavigationChange }: Exchang
                       <th scope="col">العملة إلى</th>
                       <th scope="col">سعر الصرف</th>
                       <th scope="col">تاريخ التفعيل</th>
-                      <th scope="col">من تاريخ</th>
-                      <th scope="col">إلى تاريخ</th>
                       <th scope="col">الحالة</th>
                     </tr>
                   </thead>
@@ -446,8 +436,6 @@ function ExchangeRatesScreen({ userName, onLogout, onNavigationChange }: Exchang
                         <td>{historyRate.toCurrency}</td>
                         <td>{historyRate.rate}</td>
                         <td>{formatEffectiveDate(historyRate.effectiveDate)}</td>
-                        <td>{formatOptionalDate(historyRate.fromDate)}</td>
-                        <td>{formatOptionalDate(historyRate.toDate)}</td>
                         <td>
                           <span className={`exchange-rates-status${historyRate.isActive ? ' exchange-rates-status-active' : ''}`}>
                             {historyRate.isActive ? 'نشط' : 'سابق'}

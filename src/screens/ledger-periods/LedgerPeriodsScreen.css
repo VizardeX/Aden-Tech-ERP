@@ -1,0 +1,148 @@
+.ledger-periods-screen {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.ledger-periods-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.ledger-periods-create-button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  padding: 0 18px;
+}
+
+.ledger-periods-create-button span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.ledger-periods-eyebrow,
+.ledger-periods-panel-label {
+  color: #184678;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ledger-periods-header h1,
+.ledger-periods-panel-heading h2 {
+  margin: 0;
+  color: #243142;
+}
+
+.ledger-periods-header h1 {
+  margin-top: 5px;
+  font-size: 30px;
+}
+
+.ledger-periods-header p {
+  margin: 8px 0 0;
+  color: #778393;
+  font-size: 13px;
+}
+
+.ledger-periods-panel {
+  min-width: 0;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e7ec;
+  border-radius: 6px;
+  direction: rtl;
+}
+
+.ledger-periods-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.ledger-periods-panel-heading h2 {
+  margin-top: 4px;
+  font-size: 18px;
+}
+
+.ledger-periods-count {
+  padding: 5px 9px;
+  border-radius: 4px;
+  background: #e2f5f6;
+  color: #184678;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.ledger-periods-message {
+  margin: 24px 0 0;
+  color: #778393;
+  font-size: 13px;
+}
+
+.ledger-periods-message-error {
+  color: #b33a3a;
+}
+
+.ledger-periods-table-wrapper {
+  margin-top: 24px;
+  max-height: min(520px, calc(100vh - 330px));
+  overflow: auto;
+}
+
+.ledger-periods-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  color: #334154;
+  font-size: 13px;
+  text-align: right;
+}
+
+.ledger-periods-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 14px;
+  border-bottom: 1px solid #dfe5eb;
+  color: #596777;
+  background: #f7f9fb;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ledger-periods-table td {
+  padding: 15px 14px;
+  border-bottom: 1px solid #edf0f3;
+  white-space: nowrap;
+}
+
+.ledger-periods-table tbody tr:hover {
+  background: #fcfdfd;
+}
+
+.ledger-periods-name-field,
+.ledger-periods-form-error {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .ledger-periods-header {
+    flex-direction: column;
+  }
+
+  .ledger-periods-create-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ledger-periods-panel {
+    padding: 18px;
+  }
+}

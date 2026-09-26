@@ -22,6 +22,7 @@ const settingsItems = [
   { label: 'دليل الحسابات', value: 'chartOfAccounts' },
   { label: 'العملات', value: 'currencies' },
   { label: 'أسعار الصرف', value: 'exchangeRates' },
+  { label: 'الفترات المحاسبية', value: 'ledgerPeriods' },
 ]
 
 function AppLayout({
