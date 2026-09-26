@@ -3,6 +3,7 @@ import AccountsScreen from '../accounts/AccountsScreen'
 import CurrenciesScreen from '../currencies/CurrenciesScreen'
 import ExchangeRatesScreen from '../exchange-rates/ExchangeRatesScreen'
 import LedgerPeriodsScreen from '../ledger-periods/LedgerPeriodsScreen'
+import TenantDataScreen from '../tenant-data/TenantDataScreen'
 import './MainScreen.css'
 
 type MainScreenProps = {
@@ -11,9 +12,9 @@ type MainScreenProps = {
 }
 
 function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
-  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods'>('chartOfAccounts')
+  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData'>('chartOfAccounts')
   const handleNavigationChange = (navigation: string) => {
-    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods') {
+    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData') {
       setCurrentScreen(navigation)
     }
   }
@@ -41,6 +42,16 @@ function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
   if (currentScreen === 'ledgerPeriods') {
     return (
       <LedgerPeriodsScreen
+        userName={loggedInEmail}
+        onLogout={onLogout}
+        onNavigationChange={handleNavigationChange}
+      />
+    )
+  }
+
+  if (currentScreen === 'tenantData') {
+    return (
+      <TenantDataScreen
         userName={loggedInEmail}
         onLogout={onLogout}
         onNavigationChange={handleNavigationChange}

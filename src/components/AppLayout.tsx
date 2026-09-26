@@ -23,6 +23,7 @@ const settingsItems = [
   { label: 'العملات', value: 'currencies' },
   { label: 'أسعار الصرف', value: 'exchangeRates' },
   { label: 'الفترات المحاسبية', value: 'ledgerPeriods' },
+  { label: 'بيانات المستأجر', value: 'tenantData' },
 ]
 
 function AppLayout({

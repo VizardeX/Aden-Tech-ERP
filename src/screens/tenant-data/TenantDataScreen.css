@@ -1,0 +1,223 @@
+.tenant-data-screen {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.tenant-data-header {
+  margin-bottom: 28px;
+}
+
+.tenant-data-eyebrow,
+.tenant-data-panel-label {
+  color: #184678;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.tenant-data-header h1 {
+  margin: 5px 0 0;
+  color: #243142;
+  font-size: 30px;
+}
+
+.tenant-data-header p {
+  margin: 8px 0 0;
+  color: #778393;
+  font-size: 13px;
+}
+
+.tenant-data-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tenant-data-metric {
+  display: flex;
+  min-height: 112px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid #e2e7ec;
+  border-right: 3px solid #2cafb9;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.tenant-data-metric span {
+  color: #778393;
+  font-size: 12px;
+}
+
+.tenant-data-metric strong {
+  color: #243142;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.tenant-data-metric-currency strong {
+  color: #184678;
+  font-family: var(--font-en);
+  font-size: 28px;
+}
+
+.tenant-data-currency-panel {
+  padding: 24px;
+  border: 1px solid #e2e7ec;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.tenant-data-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.tenant-data-panel-heading h2 {
+  margin: 4px 0 0;
+  color: #243142;
+  font-size: 18px;
+}
+
+.tenant-data-current-currency {
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: #e2f5f6;
+  color: #184678;
+  font-family: var(--font-en);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tenant-data-currency-form {
+  display: grid;
+  grid-template-columns: minmax(180px, 300px) 1fr;
+  align-items: end;
+  gap: 16px 24px;
+  padding-top: 20px;
+}
+
+.tenant-data-currency-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #536071;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tenant-data-currency-form input,
+.tenant-data-currency-form select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid #cbd3dc;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #243142;
+  font: inherit;
+  font-family: var(--font-en);
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.tenant-data-currency-form input:focus,
+.tenant-data-currency-form select:focus {
+  border-color: #2cafb9;
+  outline: 2px solid rgba(44, 175, 185, 0.18);
+}
+
+.tenant-data-form-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tenant-data-form-actions button {
+  min-height: 42px;
+  padding: 0 18px;
+}
+
+.tenant-data-form-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tenant-data-form-error,
+.tenant-data-form-success {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+}
+
+.tenant-data-form-error {
+  color: #b42318;
+}
+
+.tenant-data-form-success {
+  color: #16757b;
+}
+
+.tenant-data-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #e2e7ec;
+  background: #ffffff;
+  color: #536071;
+  font-size: 14px;
+}
+
+.tenant-data-state-error {
+  border-color: #edc4c0;
+  background: #fff5f4;
+  color: #b42318;
+}
+
+.tenant-data-state-error button {
+  flex: 0 0 auto;
+  padding: 7px 12px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: #ffffff;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+@media (max-width: 720px) {
+  .tenant-data-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tenant-data-currency-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 460px) {
+  .tenant-data-overview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tenant-data-metric {
+    min-height: 92px;
+  }
+
+  .tenant-data-currency-panel {
+    padding: 18px;
+  }
+
+  .tenant-data-state {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
