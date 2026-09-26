@@ -33,6 +33,27 @@ function getTodayDate() {
   return `${year}-${month}-${day}`
 }
 
+function getMinimumStartDate(ledgerPeriods: LedgerPeriod[]) {
+  const today = getTodayDate()
+  const latestEndDate = ledgerPeriods[0]?.endDate
+  if (!latestEndDate) {
+    return today
+  }
+
+  const parsedEndDate = new Date(latestEndDate)
+  if (Number.isNaN(parsedEndDate.getTime())) {
+    return today
+  }
+
+  const nextDate = new Date(Date.UTC(
+    parsedEndDate.getUTCFullYear(),
+    parsedEndDate.getUTCMonth(),
+    parsedEndDate.getUTCDate() + 1,
+  )).toISOString().slice(0, 10)
+
+  return nextDate > today ? nextDate : today
+}
+
 function toIsoDateTime(dateValue: string) {
   const currentTime = new Date()
   const selectedDate = new Date(`${dateValue}T00:00:00`)
@@ -99,9 +120,9 @@ function LedgerPeriodsScreen({ userName, onLogout, onNavigationChange }: LedgerP
   }, [refreshLedgerPeriods])
 
   const openCreateDialog = () => {
-    const today = getTodayDate()
+    const startDate = getMinimumStartDate(ledgerPeriods)
     setCreateError('')
-    setCreateForm({ periodName: '', startDate: today, endDate: today })
+    setCreateForm({ periodName: '', startDate, endDate: startDate })
     setIsCreateDialogOpen(true)
   }
 
@@ -115,9 +136,9 @@ function LedgerPeriodsScreen({ userName, onLogout, onNavigationChange }: LedgerP
     event.preventDefault()
     setCreateError('')
 
-    const today = getTodayDate()
-    if (createForm.startDate < today || createForm.endDate < today) {
-      setCreateError('يجب أن يكون تاريخ البداية والنهاية اليوم أو تاريخاً لاحقاً.')
+    const minimumStartDate = getMinimumStartDate(ledgerPeriods)
+    if (createForm.startDate < minimumStartDate) {
+      setCreateError('يجب أن يكون تاريخ بداية الفترة في التاريخ المتاح أو بعده.')
       return
     }
     if (createForm.endDate < createForm.startDate) {
@@ -246,7 +267,7 @@ function LedgerPeriodsScreen({ userName, onLogout, onNavigationChange }: LedgerP
                 <input
                   required
                   type="date"
-                  min={getTodayDate()}
+                  min={getMinimumStartDate(ledgerPeriods)}
                   value={createForm.startDate}
                   onChange={(event) => setCreateForm({
                     ...createForm,
