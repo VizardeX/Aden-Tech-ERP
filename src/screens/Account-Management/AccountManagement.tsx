@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import AppLayout from '../../components/AppLayout'
 import './AccountManagement.css'
 import { axiosInstance, getUserById, changePassword } from '../../services/userService'
-import Cookies from 'js-cookie';
 
 interface UserItem {
     userID: number;
@@ -29,7 +28,6 @@ export default function AccountsPage(
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -80,7 +78,7 @@ export default function AccountsPage(
         const fetchUserData = async () => {
             if (!isModalOpen || !selectedUserId) return;
 
-    
+
             try {
                 setIsLoading(true);
                 const res = await getUserById(String(selectedUserId));
@@ -324,15 +322,14 @@ export default function AccountsPage(
                             borderRadius: '12px',
                             padding: '24px',
                             width: '90%',
-                            maxWidth: '700px',
+                            maxWidth: '100%',
                             maxHeight: '90vh',
                             overflowY: 'auto',
                             boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                         }}>
 
-                            {/* زر إغلاق النافذة */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <h2 style={{ margin: 0, color: '#1E466E', fontSize: '18px' }}>تعديل بيانات المستخدم</h2>
+                                <h2 style={{ margin: 6, color: '#1E466E', fontSize: '18px' }}>تعديل بيانات المستخدم</h2>
                                 <button
                                     onClick={() => setIsModalOpen(false)}
                                     style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#6B7280' }}
@@ -341,245 +338,291 @@ export default function AccountsPage(
                                 </button>
                             </div>
 
-                            {/* هنا تضعين الكود الطويل الخاص بالـ form الذي أرسلتيه */}
-                            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'right' }}>
-                                {/* محتوى الـ inputs ونماذج التعديل التي أرسلتِها */}
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>الاسم الاول</label>
-                                        <input
-                                            type="text"
-                                            value={firstName}
-                                            onChange={(e) => setFirstName(e.target.value)}
-                                            required
-                                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>الاسم الاخير</label>
-                                        <input
-                                            type="text"
-                                            value={lastName}
-                                            onChange={(e) => setLastName(e.target.value)}
-                                            required
-                                            style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
-                                        />
-                                    </div>
+                            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
 
-                                     <div>
-                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
-                                        (للقراءه) البريد الإلكتروني
-                                    </label>
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                        style={{
-                                            color: '#1E466E',
-                                            width: '100%',
-                                            padding: '10px 14px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #D1D5DB',
-                                            fontSize: '14px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    />
-                                </div>
 
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020203', marginBottom: '8px' }}>
-                                        رقم الهاتف
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        value={phoneNumber}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        style={{
-                                            color: '#1E466E',
-                                            width: '100%',
-                                            padding: '10px 14px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #D1D5DB',
-                                            fontSize: '14px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
-                                            direction: 'ltr',
-                                            textAlign: 'right',
-                                        }}
-                                    />
-                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
 
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
-                                        حالة المستخدم
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={userStatus}
-                                        onChange={(e) => setUserStatus(e.target.value)}
-                                        required
-                                        style={{
-                                            color: '#1E466E',
-                                            width: '100%',
-                                            padding: '10px 14px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #D1D5DB',
-                                            fontSize: '14px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
-                                        نوع المستخدم
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={userType}
-                                        onChange={(e) => setUserType(e.target.value)}
-                                        required
-                                        style={{
-                                            color: '#1E466E',
-                                            width: '100%',
-                                            padding: '10px 14px',
-                                            borderRadius: '8px',
-                                            border: '1px solid #D1D5DB',
-                                            fontSize: '14px',
-                                            outline: 'none',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    />
-                                </div>
-
-                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gridColumn: '1 / -1', width: '100%' }}>
-                                    <button
-                                        type="submit"
-                                        disabled={isSaving}
-                                        style={{
-                                            backgroundColor: '#1E466E',
-                                            color: '#ffffff',
-                                            padding: '10px 24px',
-                                            borderRadius: '8px',
-                                            border: 'none',
-                                            fontSize: '14px',
-                                            fontWeight: '500',
-                                            cursor: isSaving ? 'not-allowed' : 'pointer',
-                                            opacity: isSaving ? 0.7 : 1,
-                                        }}
-                                    >
-                                        {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
-
-                                <h3 style={{ gridColumn: '1 / -1', color: '#919191d6', fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '16px' }}>
-                                    تغيير كلمة المرور
-                                </h3>
-
-                                {passMessage && (
                                     <div
                                         style={{
-                                            padding: '10px 14px',
-                                            borderRadius: '6px',
-                                            marginBottom: '16px',
-                                            fontSize: '14px',
-                                            textAlign: 'right',
-                                            backgroundColor: passMessage.type === 'success' ? '#DEF7EC' : '#FDE8E8',
-                                            color: passMessage.type === 'success' ? '#03543F' : '#9B1C1C',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            paddingTop: '10px',
+                                            minWidth: '140px',
                                         }}
                                     >
-                                        {passMessage.text}
-                                    </div>
-                                )}
-
-                                <div
-                                    style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: 'repeat(2, 1fr)',
-                                        gap: '16px',
-                                        textAlign: 'right',
-                                        width: '100%',
-                                    }}
-                                    onSubmit={handlePasswordChange}
-                                >
-
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
-                                            كلمة مرور جديده
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={''}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                            placeholder="••••••••"
+                                        <div
                                             style={{
-                                                color: '#1E466E',
-                                                width: '100%',
-                                                padding: '10px 14px',
-                                                borderRadius: '8px',
-                                                border: '1px solid #D1D5DB',
-                                                fontSize: '14px',
-                                                outline: 'none',
-                                                boxSizing: 'border-box',
-                                                textAlign: 'right',
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
-                                            تأكيد كلمة المرور
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={''}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            placeholder="••••••••"
-                                            style={{
-                                                color: '#1E466E',
-                                                width: '100%',
-                                                padding: '10px 14px',
-                                                borderRadius: '8px',
-                                                border: '1px solid #D1D5DB',
-                                                fontSize: '14px',
-                                                outline: 'none',
-                                                boxSizing: 'border-box',
-                                                textAlign: 'right',
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gridColumn: '1 / -1', width: '100%' }}>
-                                        <button
-                                            type="submit"
-                                            disabled={passLoading}
-                                            style={{
-                                                backgroundColor: passLoading ? '#9CA3AF' : '#29B4B9',
-                                                color: '#ffffff',
-                                                padding: '10px 24px',
-                                                borderRadius: '8px',
-                                                border: 'none',
-                                                fontSize: '14px',
-                                                fontWeight: '500',
-                                                cursor: passLoading ? 'not-allowed' : 'pointer',
+                                                width: '100px',
+                                                height: '100px',
+                                                borderRadius: '50%',
+                                                overflow: 'hidden',
+                                                border: '3px solid #1E466E',
+                                                backgroundColor: '#E5E7EB',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
                                             }}
                                         >
-                                            {passLoading ? 'جاري الحفظ...' : 'حفظ كلمة المرور'}
-                                        </button>
+                                            <img
+                                                src={profileImage}
+                                                alt="صورة المستخدم"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                }}
+                                                onError={(e) => {
+                                                    (e.currentTarget as HTMLImageElement).src =
+                                                        'https://ui-avatars.com/api/?name=' +
+                                                        encodeURIComponent(firstName || 'User') +
+                                                        '&background=1E466E&color=fff';
+                                                }}
+                                            />
+                                        </div>
                                     </div>
-
                                 </div>
 
+                                <div style={{ width: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch' }} />
+
+                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', flex: 1, textAlign: 'right' }}>
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>الاسم الاول</label>
+                                            <input
+                                                type="text"
+                                                value={firstName}
+                                                onChange={(e) => setFirstName(e.target.value)}
+                                                required
+                                                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>الاسم الاخير</label>
+                                            <input
+                                                type="text"
+                                                value={lastName}
+                                                onChange={(e) => setLastName(e.target.value)}
+                                                required
+                                                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
+                                                (للقراءه) البريد الإلكتروني
+                                            </label>
+                                            <input
+                                                type="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                required
+                                                style={{
+                                                    color: '#1E466E',
+                                                    width: '100%',
+                                                    padding: '10px 14px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #D1D5DB',
+                                                    fontSize: '14px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020203', marginBottom: '8px' }}>
+                                                رقم الهاتف
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                style={{
+                                                    color: '#1E466E',
+                                                    width: '100%',
+                                                    padding: '10px 14px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #D1D5DB',
+                                                    fontSize: '14px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box',
+                                                    direction: 'ltr',
+                                                    textAlign: 'right',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
+                                                حالة المستخدم
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={userStatus}
+                                                onChange={(e) => setUserStatus(e.target.value)}
+                                                required
+                                                style={{
+                                                    color: '#1E466E',
+                                                    width: '100%',
+                                                    padding: '10px 14px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #D1D5DB',
+                                                    fontSize: '14px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
+                                                نوع المستخدم
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={userType}
+                                                onChange={(e) => setUserType(e.target.value)}
+                                                required
+                                                style={{
+                                                    color: '#1E466E',
+                                                    width: '100%',
+                                                    padding: '10px 14px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid #D1D5DB',
+                                                    fontSize: '14px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gridColumn: '1 / -1', width: '100%' }}>
+                                            <button
+                                                type="submit"
+                                                disabled={isSaving}
+                                                style={{
+                                                    backgroundColor: '#1E466E',
+                                                    color: '#ffffff',
+                                                    padding: '10px 24px',
+                                                    borderRadius: '8px',
+                                                    border: 'none',
+                                                    fontSize: '14px',
+                                                    fontWeight: '500',
+                                                    cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                    opacity: isSaving ? 0.7 : 1,
+                                                }}
+                                            >
+                                                {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
+
+                                    <div style={{ marginTop: '20px', paddingTop: '16px' }}>
+                                        <h3 style={{ gridColumn: '1 / -1', color: '#919191d6', fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '16px' }}>
+                                            تغيير كلمة المرور
+                                        </h3>
+
+                                        {passMessage && (
+                                            <div
+                                                style={{
+                                                    padding: '10px 14px',
+                                                    borderRadius: '6px',
+                                                    marginBottom: '16px',
+                                                    fontSize: '14px',
+                                                    textAlign: 'right',
+                                                    backgroundColor: passMessage.type === 'success' ? '#DEF7EC' : '#FDE8E8',
+                                                    color: passMessage.type === 'success' ? '#03543F' : '#9B1C1C',
+                                                }}
+                                            >
+                                                {passMessage.text}
+                                            </div>
+                                        )}
+
+                                        <div
+                                            style={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(2, 1fr)',
+                                                gap: '16px',
+                                                textAlign: 'right',
+                                                width: '100%',
+                                            }}
+                                            onSubmit={handlePasswordChange}
+                                        >
+
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
+                                                    كلمة مرور جديده
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={''}
+                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                    placeholder="••••••••"
+                                                    style={{
+                                                        color: '#1E466E',
+                                                        width: '100%',
+                                                        padding: '10px 14px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #D1D5DB',
+                                                        fontSize: '14px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                        textAlign: 'right',
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
+                                                    تأكيد كلمة المرور
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={''}
+                                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                                    placeholder="••••••••"
+                                                    style={{
+                                                        color: '#1E466E',
+                                                        width: '100%',
+                                                        padding: '10px 14px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #D1D5DB',
+                                                        fontSize: '14px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                        textAlign: 'right',
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gridColumn: '1 / -1', width: '100%' }}>
+                                                <button
+                                                    type="submit"
+                                                    disabled={passLoading}
+                                                    style={{
+                                                        backgroundColor: passLoading ? '#9CA3AF' : '#29B4B9',
+                                                        color: '#ffffff',
+                                                        padding: '10px 24px',
+                                                        borderRadius: '8px',
+                                                        border: 'none',
+                                                        fontSize: '14px',
+                                                        fontWeight: '500',
+                                                        cursor: passLoading ? 'not-allowed' : 'pointer',
+                                                    }}
+                                                >
+                                                    {passLoading ? 'جاري الحفظ...' : 'حفظ كلمة المرور'}
+                                                </button>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                            
                             </form>
 
                         </div>
