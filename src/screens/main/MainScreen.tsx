@@ -4,6 +4,7 @@ import CurrenciesScreen from '../currencies/CurrenciesScreen'
 import ExchangeRatesScreen from '../exchange-rates/ExchangeRatesScreen'
 import LedgerPeriodsScreen from '../ledger-periods/LedgerPeriodsScreen'
 import TenantDataScreen from '../tenant-data/TenantDataScreen'
+import AccountManagement from '../Account-Management/AccountManagement'
 import './MainScreen.css'
 
 type MainScreenProps = {
@@ -12,9 +13,9 @@ type MainScreenProps = {
 }
 
 function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
-  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData'>('chartOfAccounts')
+  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData' | 'AccountManagement'>('chartOfAccounts')
   const handleNavigationChange = (navigation: string) => {
-    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData') {
+    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData' || navigation === 'AccountManagement') {
       setCurrentScreen(navigation)
     }
   }
@@ -22,6 +23,16 @@ function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
   if (currentScreen === 'currencies') {
     return (
       <CurrenciesScreen
+        userName={loggedInEmail}
+        onLogout={onLogout}
+        onNavigationChange={handleNavigationChange}
+      />
+    )
+  }
+
+  if (currentScreen === 'AccountManagement') {
+    return (
+      <AccountManagement
         userName={loggedInEmail}
         onLogout={onLogout}
         onNavigationChange={handleNavigationChange}

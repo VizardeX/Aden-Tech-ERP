@@ -4,6 +4,7 @@ import mainLogo from '../../assets/MainLogo.png'
 import './LoginScreen.css'
 import { useTranslation } from 'react-i18next'
 import { saveTokens, saveUserID } from '../../services/authService'
+import Cookies from 'js-cookie'
 
 type LoginScreenProps = {
   language: 'en' | 'ar'
@@ -95,6 +96,7 @@ function LoginScreen({ language, onSwitchLanguage, onLoginSuccess }: LoginScreen
       }
 
       saveTokens({ token: loginBody.token, refreshToken: loginBody.refreshToken })
+      Cookies.set('token', loginBody.token, { expires: 7, sameSite: 'Strict' });
       saveUserID(parsedUserID)
       onLoginSuccess(email)
     } catch {
