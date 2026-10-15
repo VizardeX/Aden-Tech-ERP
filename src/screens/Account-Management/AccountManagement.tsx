@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import AppLayout from '../../components/AppLayout'
 import './AccountManagement.css'
 import { axiosInstance, getUserById, changePassword } from '../../services/userService'
+import Cookies from 'js-cookie';
 
 interface UserItem {
     userID: number;
@@ -9,10 +10,19 @@ interface UserItem {
     lastName?: string;
     fullName?: string;
     email: string;
+    password?: string;
     phoneNumber?: string;
     userType?: number;
     userStatus?: number;
     profileImage?: string;
+}
+
+interface DropdownItem {
+    disabled: boolean;
+    group: any;
+    selected: boolean;
+    text: string;
+    value: string;
 }
 
 type AccountManagementScreenProps = {
@@ -31,9 +41,14 @@ export default function AccountsPage(
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [phoneNumber, setPhone] = useState('');
-    const [userStatus, setUserStatus] = useState('');
-    const [userType, setUserType] = useState('');
+    const [userTypes, setUserTypes] = useState<DropdownItem[]>([]);
+    const [userStatuses, setUserStatuses] = useState<DropdownItem[]>([]);
+    const [userType, setUserType] = useState<string | number>('');
+    const [userStatus, setUserStatus] = useState<string | number>('');
+    const [selectedUserType, setSelectedUserType] = useState<string | number>('');
+    const [selectedUserStatus, setSelectedUserStatus] = useState<string | number>('');
     const [profileImage, setProfileImage] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [passLoading, setPassLoading] = useState(false);
@@ -46,10 +61,39 @@ export default function AccountsPage(
 
 
     const getUsers = async () => {
-        const response = await axiosInstance.get('/v1/admin/users');
+
+        const response = await axiosInstance.get('/v1/admin/users', {
+            headers: {
+                Authorization: `Bearer ${Cookies.get('token')}`
+            }
+        });
         return response.data;
     };
+    const getUserTypeLabel = (type: number): string => {
+        switch (type) {
+            case 0:
+                return 'مدير (Admin)';
+            case 1:
+                return 'مستخدم (User)';
+            case 2:
+                return 'مشرف (Supervisor)';
+            default:
+                return 'غير محدد';
+        }
+    };
 
+    const getUserStatusLabel = (status: number): string => {
+        switch (status) {
+            case 0:
+                return 'غير نشط (Inactive)';
+            case 1:
+                return 'فعال (Active)';
+            case 2:
+                return 'معلق (Pending)';
+            default:
+                return 'غير محدد';
+        }
+    };
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -68,6 +112,32 @@ export default function AccountsPage(
         };
 
         fetchUsers();
+        const fetchOptionsAndData = async () => {
+            try {
+                const token = Cookies.get('token');
+                console.log('🔍 التوكين والمعرف من الكوكيز:', { token });
+                const optionsRes = await fetch('/api/v1/admin/users/users-metadata/true'
+                    , {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                    });
+                const optionsData = await optionsRes.json();
+
+                setUserTypes(optionsData.userTypes || []);
+                setUserStatuses(optionsData.userStatuses || []);
+
+
+
+
+            } catch (error) {
+                console.error('Failed to load data', error);
+            }
+        };
+
+        fetchOptionsAndData();
     }, []);
 
     const handleAddAccount = () => {
@@ -132,7 +202,6 @@ export default function AccountsPage(
             return;
         }
 
-        // 2. الإرسال للـ API
         try {
             setPassLoading(true);
 
@@ -156,21 +225,63 @@ export default function AccountsPage(
     };
 
 
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
         setMessage(null);
 
         try {
+            const formData = new FormData();
+
+            const requestData = {
+                data: {
+                    profile: {
+                        firstName: firstName,
+                        lastName: lastName,
+                        userType: 0 | Number(selectedUserType),
+                        userStatus: 1 | Number(selectedUserStatus),
+                        note: 'note',
+                        email: email,
+                        phoneNumber: phoneNumber,
+                    },
+                    isSupport: false,
+                    password: newPassword || null,
+                    uiRootPath: null
+                }
+            };
+
+            formData.append('data', JSON.stringify(requestData.data));
+
+            // if (selectedFile) {
+            //     formData.append('profileImageFile', selectedFile);
+            // }
+            const token = Cookies.get('token');
+            console.log({ token, requestData });
+            const response = await fetch(`/api/v1/admin/users`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            });
+
+            const responseText = await response.text();
+            const data = responseText ? JSON.parse(responseText) : {};
+
+          
+            if (!response.ok) {
+                throw new Error( data.message || 'فشل حفظ التغييرات');
+            }
 
             setMessage({ type: 'success', text: 'تم حفظ التغييرات بنجاح!' });
-        } catch (error) {
-            setMessage({ type: 'error', text: 'حدث خطأ أثناء حفظ التغييرات.' });
+
+        } catch (error: any) {
+            console.error('Error saving changes:', error);
+            setMessage({ type: 'error', text: error.message || 'حدث خطأ أثناء حفظ التغييرات.' });
         } finally {
             setIsSaving(false);
         }
-
-
     };
 
     const handleEditUser = (userId: string | number) => {
@@ -178,29 +289,38 @@ export default function AccountsPage(
         setIsModalOpen(true);
     };
 
-    const getUserTypeLabel = (type: number): string => {
-        switch (type) {
-            case 0:
-                return 'مدير (Admin)';
-            case 1:
-                return 'مستخدم (User)';
-            case 2:
-                return 'مشرف (Supervisor)';
-            default:
-                return 'غير محدد';
-        }
-    };
 
-    const getUserStatusLabel = (status: number): string => {
-        switch (status) {
-            case 0:
-                return 'غير نشط (Inactive)';
-            case 1:
-                return 'فعال (Active)';
-            case 2:
-                return 'معلق (Pending)';
-            default:
-                return 'غير محدد';
+
+    const handleDeleteAccount = async (id: string | number) => {
+        const confirmed = window.confirm("هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.");
+        if (!confirmed) return;
+
+        try {
+            setIsSaving(true);
+            const token = Cookies.get('token');
+            const response = await fetch(`/api/v1/admin/users/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'فشل عملية حذف الحساب');
+            }
+
+            alert('تم حذف الحساب بنجاح');
+
+
+
+        } catch (error: any) {
+            console.error('Error deleting account:', error);
+            alert(error.message || 'حدث خطأ أثناء محاولة حذف الحساب');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -395,7 +515,7 @@ export default function AccountsPage(
                                                 type="text"
                                                 value={firstName}
                                                 onChange={(e) => setFirstName(e.target.value)}
-                                                required
+
                                                 style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
                                             />
                                         </div>
@@ -405,7 +525,7 @@ export default function AccountsPage(
                                                 type="text"
                                                 value={lastName}
                                                 onChange={(e) => setLastName(e.target.value)}
-                                                required
+
                                                 style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
                                             />
                                         </div>
@@ -417,10 +537,10 @@ export default function AccountsPage(
                                             <input
                                                 type="email"
                                                 value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                required
+                                                readOnly
                                                 style={{
                                                     color: '#1E466E',
+                                                    backgroundColor: '#F3F4F6',
                                                     width: '100%',
                                                     padding: '10px 14px',
                                                     borderRadius: '8px',
@@ -428,6 +548,7 @@ export default function AccountsPage(
                                                     fontSize: '14px',
                                                     outline: 'none',
                                                     boxSizing: 'border-box',
+                                                    cursor: 'not-allowed',
                                                 }}
                                             />
                                         </div>
@@ -459,11 +580,10 @@ export default function AccountsPage(
                                             <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
                                                 حالة المستخدم
                                             </label>
-                                            <input
-                                                type="text"
+                                            <select
                                                 value={userStatus}
-                                                onChange={(e) => setUserStatus(e.target.value)}
-                                                required
+                                                onChange={(e) => setUserStatus(Number(e.target.value))} // تحويل القيمة إلى رقم ليتوافق مع قاعدة البيانات
+
                                                 style={{
                                                     color: '#1E466E',
                                                     width: '100%',
@@ -473,19 +593,28 @@ export default function AccountsPage(
                                                     fontSize: '14px',
                                                     outline: 'none',
                                                     boxSizing: 'border-box',
+                                                    backgroundColor: '#ffffff',
+                                                    cursor: 'pointer',
                                                 }}
-                                            />
+                                            >
+                                                <option value=""> {userStatus} </option>
+                                                {userStatuses.map((item) => (
+                                                    <option key={item.value} value={item.value} disabled={item.disabled}>
+                                                        {item.text}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
 
                                         <div>
                                             <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
                                                 نوع المستخدم
                                             </label>
-                                            <input
-                                                type="text"
+                                            <select
                                                 value={userType}
-                                                onChange={(e) => setUserType(e.target.value)}
-                                                required
+
+                                                onChange={(e) => setUserType(Number(e.target.value))}
+
                                                 style={{
                                                     color: '#1E466E',
                                                     width: '100%',
@@ -496,28 +625,57 @@ export default function AccountsPage(
                                                     outline: 'none',
                                                     boxSizing: 'border-box',
                                                 }}
-                                            />
+                                            >
+                                                <option value=""> {userType} </option>
+                                                {userTypes.map((item) => (
+                                                    <option key={item.value} value={item.value} disabled={item.disabled}>
+                                                        {item.text}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px', gridColumn: '1 / -1', gap: '10px' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
+                                                <button
+                                                    type="submit"
+                                                    disabled={isSaving}
+                                                    style={{
+                                                        backgroundColor: '#1E466E',
+                                                        color: '#ffffff',
+                                                        padding: '10px 24px',
+                                                        borderRadius: '8px',
+                                                        border: 'none',
+                                                        fontSize: '14px',
+                                                        fontWeight: '500',
+                                                        cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                        opacity: isSaving ? 0.7 : 1,
+                                                    }}
+                                                >
+                                                    {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                                                </button>
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteAccount(selectedUserId!)}
+                                                    disabled={isSaving}
+                                                    style={{
+                                                        backgroundColor: '#924727',
+                                                        color: '#ffffff',
+                                                        padding: '10px 24px',
+                                                        borderRadius: '8px',
+                                                        border: 'none',
+                                                        fontSize: '14px',
+                                                        fontWeight: '500',
+                                                        cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                        opacity: isSaving ? 0.7 : 1,
+                                                    }}
+                                                >
+                                                    {isSaving ? 'جاري حذف الحساب...' : 'حذف الحساب'}
+                                                </button>
+                                            </div>
                                         </div>
 
-                                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gridColumn: '1 / -1', width: '100%' }}>
-                                            <button
-                                                type="submit"
-                                                disabled={isSaving}
-                                                style={{
-                                                    backgroundColor: '#1E466E',
-                                                    color: '#ffffff',
-                                                    padding: '10px 24px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    fontSize: '14px',
-                                                    fontWeight: '500',
-                                                    cursor: isSaving ? 'not-allowed' : 'pointer',
-                                                    opacity: isSaving ? 0.7 : 1,
-                                                }}
-                                            >
-                                                {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-                                            </button>
-                                        </div>
                                     </div>
                                     <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
 
@@ -550,7 +708,7 @@ export default function AccountsPage(
                                                 textAlign: 'right',
                                                 width: '100%',
                                             }}
-                                            onSubmit={handlePasswordChange}
+                                            onSubmit={handlePasswordChange }
                                         >
 
                                             <div>
@@ -632,6 +790,3 @@ export default function AccountsPage(
         </AppLayout>
     );
 }
-
-
-
