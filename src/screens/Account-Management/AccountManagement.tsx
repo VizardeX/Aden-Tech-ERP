@@ -293,7 +293,7 @@ export default function AccountsPage(
                     phoneNumber,
                 },
                 isSupport: false,
-                password : newPassword,
+                password: newPassword,
                 uiRootPath: null,
             };
 
@@ -684,9 +684,9 @@ export default function AccountsPage(
                                         </div>
 
                                     </div>
-                                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
+                                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px'}} />
 
-                                    <div style={{ marginTop: '5px', paddingTop: '16px' }}>
+                                    <div style={{ marginTop: '0px' }}>
                                         <h3 style={{ gridColumn: '1 / -1', color: '#919191d6', fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '16px' }}>
                                             تغيير كلمة المرور
                                         </h3>
@@ -764,46 +764,51 @@ export default function AccountsPage(
                                                 />
                                             </div>
 
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px', gridColumn: '1 / -1', gap: '10px' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
-                                                    <button
-                                                        type="submit"
-                                                        disabled={isSaving}
-                                                        style={{
-                                                            backgroundColor: '#1E466E',
-                                                            color: '#ffffff',
-                                                            padding: '10px 24px',
-                                                            borderRadius: '8px',
-                                                            border: 'none',
-                                                            fontSize: '14px',
-                                                            fontWeight: '500',
-                                                            cursor: isSaving ? 'not-allowed' : 'pointer',
-                                                            opacity: isSaving ? 0.7 : 1,
-                                                        }}
-                                                    >
-                                                        {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-                                                    </button>
-                                                </div>
-                                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDeleteAccount(selectedUserId)}
-                                                        disabled={isSaving}
-                                                        style={{
-                                                            backgroundColor: '#924727',
-                                                            color: '#ffffff',
-                                                            padding: '10px 24px',
-                                                            borderRadius: '8px',
-                                                            border: 'none',
-                                                            fontSize: '14px',
-                                                            fontWeight: '500',
-                                                            cursor: isSaving ? 'not-allowed' : 'pointer',
-                                                            opacity: isSaving ? 0.7 : 1,
-                                                        }}
-                                                    >
-                                                        {isSaving ? 'جاري حذف الحساب...' : 'حذف الحساب'}
-                                                    </button>
-                                                </div>
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'flex-end',
+                                                alignItems: 'center',
+                                                margin: '10px',
+                                                gridColumn: '1 / -1',
+                                                gap: '10px',
+                                            }}>
+                                                <button
+                                                    type="submit"
+                                                    disabled={isSaving}
+                                                    style={{
+                                                        backgroundColor: '#1E466E',
+                                                        color: '#ffffff',
+                                                        padding: '10px 24px',
+                                                        borderRadius: '8px',
+                                                        border: 'none',
+                                                        fontSize: '14px',
+                                                        fontWeight: '500',
+                                                        cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                        opacity: isSaving ? 0.7 : 1,
+                                                    }}
+                                                >
+                                                    {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDeleteAccount(selectedUserId)}
+                                                    disabled={isSaving}
+                                                    style={{
+                                                        backgroundColor: '#924727',
+                                                        color: '#ffffff',
+                                                        padding: '10px 24px',
+                                                        borderRadius: '8px',
+                                                        border: 'none',
+                                                        fontSize: '14px',
+                                                        fontWeight: '500',
+                                                        cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                        opacity: isSaving ? 0.7 : 1,
+                                                    }}
+                                                >
+                                                    {isSaving ? 'جاري حذف الحساب...' : 'حذف الحساب'}
+                                                </button>
+
                                             </div>
 
                                         </div>
