@@ -96,7 +96,6 @@ function LoginScreen({ language, onSwitchLanguage, onLoginSuccess }: LoginScreen
       }
 
       saveTokens({ token: loginBody.token, refreshToken: loginBody.refreshToken })
-      Cookies.set('token', loginBody.token, { expires: 7, sameSite: 'Strict' });
       saveUserID(parsedUserID)
       onLoginSuccess(email)
     } catch {

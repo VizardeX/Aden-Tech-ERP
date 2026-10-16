@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import AppLayout from '../../components/AppLayout'
 import './AccountManagement.css'
-import { axiosInstance, getUserById, changePassword } from '../../services/userService'
+import { getUserById, changePassword } from '../../services/userService'
 import Cookies from 'js-cookie';
+import { authenticatedFetch } from '../../services/authService';
 
 interface UserItem {
     userID: number;
@@ -37,12 +38,15 @@ export default function AccountsPage(
     const [users, setUsers] = useState<UserItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [userID, setUserID] = useState<number>(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isaddModalOpen, setIsAddModalOpen] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhone] = useState('');
+    const [note, setNote] = useState('');
     const [userTypes, setUserTypes] = useState<DropdownItem[]>([]);
     const [userStatuses, setUserStatuses] = useState<DropdownItem[]>([]);
     const [userType, setUserType] = useState<string | number>('');
@@ -51,23 +55,28 @@ export default function AccountsPage(
     const [selectedUserStatus, setSelectedUserStatus] = useState<string | number>('');
     const [profileImage, setProfileImage] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [passLoading, setPassLoading] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passMessage, setPassMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState<string | number | null>(null);
-
+    const [selectedUserId, setSelectedUserId] = useState<string | number>('');
+    const [existingPassword, setExistingPassword] = useState('');
 
     const getUsers = async () => {
 
-        const response = await axiosInstance.get('/v1/admin/users', {
-            headers: {
-                Authorization: `Bearer ${Cookies.get('token')}`
+        const response = await authenticatedFetch('/api/v1/admin/users',
+            {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             }
-        });
-        return response.data;
+
+        );
+
+        const result = await response.json();
+        return result;
     };
     const getUserTypeLabel = (type: number): string => {
         switch (type) {
@@ -114,14 +123,12 @@ export default function AccountsPage(
         fetchUsers();
         const fetchOptionsAndData = async () => {
             try {
-                const token = Cookies.get('token');
-                console.log('🔍 التوكين والمعرف من الكوكيز:', { token });
-                const optionsRes = await fetch('/api/v1/admin/users/users-metadata/true'
+                const optionsRes = await authenticatedFetch('/api/v1/admin/users/users-metadata/true'
                     , {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
+
                         },
                     });
                 const optionsData = await optionsRes.json();
@@ -140,9 +147,7 @@ export default function AccountsPage(
         fetchOptionsAndData();
     }, []);
 
-    const handleAddAccount = () => {
-        alert('سيتم فتح نموذج إضافة حساب جديد');
-    };
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -183,106 +188,152 @@ export default function AccountsPage(
     }, [isModalOpen, selectedUserId]);
 
 
-    const handlePasswordChange = async (e: React.FormEvent) => {
+    const AddAccount = async (e: React.FormEvent) => {
         e.preventDefault();
-        setPassMessage(null);
-
-        if (!newPassword || !confirmPassword) {
-            setPassMessage({ type: 'error', text: 'يرجى إدخال كلمة المرور الجديدة وتأكيدها' });
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            setPassMessage({ type: 'error', text: 'كلمة المرور وتأكيدها غير متطابقين' });
-            return;
-        }
-
-        if (newPassword.length < 6) {
-            setPassMessage({ type: 'error', text: 'كلمة المرور يجب أن تكون 6 خانات على الأقل' });
-            return;
-        }
-
-        try {
-            setPassLoading(true);
-
-            const payload = {
-                email: email,
-                newPassword: newPassword,
-                confirmPassword: confirmPassword,
-            };
-
-            await changePassword(payload);
-
-            setPassMessage({ type: 'success', text: 'تم تحديث كلمة المرور بنجاح' });
-            setNewPassword('');
-            setConfirmPassword('');
-        } catch (error: any) {
-            const errorMsg = error?.response?.data?.message || 'حدث خطأ أثناء تغيير كلمة المرور';
-            setPassMessage({ type: 'error', text: errorMsg });
-        } finally {
-            setPassLoading(false);
-        }
-    };
-
-
-
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSaving(true);
         setMessage(null);
 
+        if (password !== confirmPassword) {
+            setMessage({ type: 'error', text: 'كلمة المرور وتأكيد كلمة المرور غير متطابقين.' });
+            return;
+        }
+
         try {
+
+            const innerPayload = {
+                profile: {
+                    firstName: firstName,
+                    lastName: lastName,
+                    userType: selectedUserType !== '' ? userType : 0,
+                    userStatus: selectedUserStatus !== '' ? userStatus : 1,
+                    note: note || 'New Account Note',
+                    email: email,
+                    phoneNumber: phoneNumber,
+                },
+                isSupport: false,
+                password: password,
+                uiRootPath: null
+
+            }
+
+                ;
+
             const formData = new FormData();
+            formData.append('data', JSON.stringify(innerPayload));
+            formData.append('profileImageFile', '');
+            console.log('Request Data:', innerPayload);
+            console.log('Request Data:', formData);
+            console.log({
+                passwordExists: Boolean(password),
+                passwordLength: password?.length,
+                hasUppercase: /[A-Z]/.test(password),
+                hasLowercase: /[a-z]/.test(password),
+                hasDigit: /[0-9]/.test(password),
+                hasSpecialChar: /[^a-zA-Z0-9]/.test(password),
+            });
 
-            const requestData = {
-                data: {
-                    profile: {
-                        firstName: firstName,
-                        lastName: lastName,
-                        userType: 0 | Number(selectedUserType),
-                        userStatus: 1 | Number(selectedUserStatus),
-                        note: 'note',
-                        email: email,
-                        phoneNumber: phoneNumber,
-                    },
-                    isSupport: false,
-                    password: newPassword || null,
-                    uiRootPath: null
-                }
-            };
-
-            formData.append('data', JSON.stringify(requestData.data));
-
-            // if (selectedFile) {
-            //     formData.append('profileImageFile', selectedFile);
-            // }
-            const token = Cookies.get('token');
-            console.log({ token, requestData });
-            const response = await fetch(`/api/v1/admin/users`, {
+            const response = await authenticatedFetch(`/api/v1/admin/users`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Accept: '*/*',
                 },
                 body: formData,
             });
 
             const responseText = await response.text();
-            const data = responseText ? JSON.parse(responseText) : {};
 
-          
+            console.log('Status:', response.status);
+            console.log('Response body:', responseText);
+
             if (!response.ok) {
-                throw new Error( data.message || 'فشل حفظ التغييرات');
+                throw new Error(`API Error ${response.status}: ${responseText}`);
             }
 
-            setMessage({ type: 'success', text: 'تم حفظ التغييرات بنجاح!' });
+            const result = responseText ? JSON.parse(responseText) : null;
+            console.log('Success:', result);
+
+
+            if (!response.ok) {
+                throw new Error('فشل اضافة الحساب');
+            }
+
+            setMessage({ type: 'success', text: 'تم اضافة الحساب بنجاح!' });
 
         } catch (error: any) {
             console.error('Error saving changes:', error);
-            setMessage({ type: 'error', text: error.message || 'حدث خطأ أثناء حفظ التغييرات.' });
+            setMessage({ type: 'error', text: error.message || 'حدث خطأ أثناء اضافة الحساب.' });
+        }
+    };
+
+
+    const handleSave = async (
+        e: React.FormEvent,
+        userId: string | number
+    ) => {
+        e.preventDefault();
+        setIsSaving(true);
+        setMessage(null);
+
+        try {
+            if (newPassword?.trim()) {
+                await changePassword({
+                    email,
+                    newPassword,
+                    confirmPassword,
+                });
+            }
+
+            const requestData = {
+                profile: {
+                    firstName,
+                    lastName,
+                    userType,
+                    userStatus,
+                    note: 'note',
+                    email,
+                    phoneNumber,
+                },
+                isSupport: false,
+                password : newPassword,
+                uiRootPath: null,
+            };
+
+            const formData = new FormData();
+            formData.append('data', JSON.stringify(requestData));
+            formData.append('profileImageFile', '');
+
+            const response = await authenticatedFetch(
+                `/api/v1/admin/users/${userId}`,
+                {
+                    method: 'PUT',
+                    headers: { Accept: '*/*' },
+                    body: formData,
+                }
+            );
+
+            const responseText = await response.text();
+
+            if (!response.ok) {
+                throw new Error(responseText || 'فشل حفظ التغييرات');
+            }
+
+            setMessage({
+                type: 'success',
+                text: 'تم حفظ التغييرات بنجاح!',
+            });
+        } catch (error: unknown) {
+            console.error('Error saving changes:', error);
+
+            setMessage({
+                type: 'error',
+                text: error instanceof Error
+                    ? error.message
+                    : 'حدث خطأ أثناء حفظ التغييرات.',
+            });
         } finally {
             setIsSaving(false);
         }
     };
+
 
     const handleEditUser = (userId: string | number) => {
         setSelectedUserId(userId);
@@ -297,16 +348,15 @@ export default function AccountsPage(
 
         try {
             setIsSaving(true);
-            const token = Cookies.get('token');
-            const response = await fetch(`/api/v1/admin/users/${id}`, {
+            const response = await authenticatedFetch(`/api/v1/admin/users/${selectedUserId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
             });
 
-            const data = await response.json();
+            const responseText = await response.text();
+            const data = responseText ? JSON.parse(responseText) : {};
 
             if (!response.ok) {
                 throw new Error(data.message || 'فشل عملية حذف الحساب');
@@ -337,7 +387,7 @@ export default function AccountsPage(
                 <div className="accounts-header-card">
                     <h1 className="accounts-title">إدارة الحسابات</h1>
 
-                    <button onClick={handleAddAccount} className="accounts-add-btn">
+                    <button onClick={() => setIsAddModalOpen(true)} className="accounts-add-btn">
                         <span>+</span>
                         <span>إضافة حساب</span>
                     </button>
@@ -458,7 +508,7 @@ export default function AccountsPage(
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
+                            <form onSubmit={(e) => handleSave(e, userID)} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
 
 
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
@@ -582,7 +632,7 @@ export default function AccountsPage(
                                             </label>
                                             <select
                                                 value={userStatus}
-                                                onChange={(e) => setUserStatus(Number(e.target.value))} // تحويل القيمة إلى رقم ليتوافق مع قاعدة البيانات
+                                                onChange={(e) => setUserStatus(Number(e.target.value))}
 
                                                 style={{
                                                     color: '#1E466E',
@@ -612,9 +662,7 @@ export default function AccountsPage(
                                             </label>
                                             <select
                                                 value={userType}
-
                                                 onChange={(e) => setUserType(Number(e.target.value))}
-
                                                 style={{
                                                     color: '#1E466E',
                                                     width: '100%',
@@ -634,52 +682,11 @@ export default function AccountsPage(
                                                 ))}
                                             </select>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px', gridColumn: '1 / -1', gap: '10px' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
-                                                <button
-                                                    type="submit"
-                                                    disabled={isSaving}
-                                                    style={{
-                                                        backgroundColor: '#1E466E',
-                                                        color: '#ffffff',
-                                                        padding: '10px 24px',
-                                                        borderRadius: '8px',
-                                                        border: 'none',
-                                                        fontSize: '14px',
-                                                        fontWeight: '500',
-                                                        cursor: isSaving ? 'not-allowed' : 'pointer',
-                                                        opacity: isSaving ? 0.7 : 1,
-                                                    }}
-                                                >
-                                                    {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-                                                </button>
-                                            </div>
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleDeleteAccount(selectedUserId!)}
-                                                    disabled={isSaving}
-                                                    style={{
-                                                        backgroundColor: '#924727',
-                                                        color: '#ffffff',
-                                                        padding: '10px 24px',
-                                                        borderRadius: '8px',
-                                                        border: 'none',
-                                                        fontSize: '14px',
-                                                        fontWeight: '500',
-                                                        cursor: isSaving ? 'not-allowed' : 'pointer',
-                                                        opacity: isSaving ? 0.7 : 1,
-                                                    }}
-                                                >
-                                                    {isSaving ? 'جاري حذف الحساب...' : 'حذف الحساب'}
-                                                </button>
-                                            </div>
-                                        </div>
 
                                     </div>
                                     <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
 
-                                    <div style={{ marginTop: '20px', paddingTop: '16px' }}>
+                                    <div style={{ marginTop: '5px', paddingTop: '16px' }}>
                                         <h3 style={{ gridColumn: '1 / -1', color: '#919191d6', fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '16px' }}>
                                             تغيير كلمة المرور
                                         </h3>
@@ -708,7 +715,7 @@ export default function AccountsPage(
                                                 textAlign: 'right',
                                                 width: '100%',
                                             }}
-                                            onSubmit={handlePasswordChange }
+
                                         >
 
                                             <div>
@@ -757,23 +764,46 @@ export default function AccountsPage(
                                                 />
                                             </div>
 
-                                            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', gridColumn: '1 / -1', width: '100%' }}>
-                                                <button
-                                                    type="submit"
-                                                    disabled={passLoading}
-                                                    style={{
-                                                        backgroundColor: passLoading ? '#9CA3AF' : '#29B4B9',
-                                                        color: '#ffffff',
-                                                        padding: '10px 24px',
-                                                        borderRadius: '8px',
-                                                        border: 'none',
-                                                        fontSize: '14px',
-                                                        fontWeight: '500',
-                                                        cursor: passLoading ? 'not-allowed' : 'pointer',
-                                                    }}
-                                                >
-                                                    {passLoading ? 'جاري الحفظ...' : 'حفظ كلمة المرور'}
-                                                </button>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px', gridColumn: '1 / -1', gap: '10px' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
+                                                    <button
+                                                        type="submit"
+                                                        disabled={isSaving}
+                                                        style={{
+                                                            backgroundColor: '#1E466E',
+                                                            color: '#ffffff',
+                                                            padding: '10px 24px',
+                                                            borderRadius: '8px',
+                                                            border: 'none',
+                                                            fontSize: '14px',
+                                                            fontWeight: '500',
+                                                            cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                            opacity: isSaving ? 0.7 : 1,
+                                                        }}
+                                                    >
+                                                        {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+                                                    </button>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDeleteAccount(selectedUserId)}
+                                                        disabled={isSaving}
+                                                        style={{
+                                                            backgroundColor: '#924727',
+                                                            color: '#ffffff',
+                                                            padding: '10px 24px',
+                                                            borderRadius: '8px',
+                                                            border: 'none',
+                                                            fontSize: '14px',
+                                                            fontWeight: '500',
+                                                            cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                            opacity: isSaving ? 0.7 : 1,
+                                                        }}
+                                                    >
+                                                        {isSaving ? 'جاري حذف الحساب...' : 'حذف الحساب'}
+                                                    </button>
+                                                </div>
                                             </div>
 
                                         </div>
@@ -786,6 +816,331 @@ export default function AccountsPage(
                         </div>
                     </div>
                 )}
+
+                {
+                    isaddModalOpen && (
+                        <div style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100vw',
+                            height: '100vh',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            zIndex: 1000,
+                        }}>
+                            <div style={{
+                                backgroundColor: '#ffffff',
+                                borderRadius: '12px',
+                                padding: '24px',
+                                width: '90%',
+                                maxWidth: '100%',
+                                maxHeight: '90vh',
+                                overflowY: 'auto',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                            }}>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                    <h2 style={{ margin: 6, color: '#1E466E', fontSize: '18px' }}> انشاء حساب جديد </h2>
+                                    <button
+                                        onClick={() => setIsAddModalOpen(false)}
+                                        style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#6B7280' }}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+
+                                <form onSubmit={(e) => AddAccount(e)} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
+
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                paddingTop: '10px',
+                                                minWidth: '140px',
+                                            }}
+                                        >
+                                            <div
+                                                style={{
+                                                    width: '100px',
+                                                    height: '100px',
+                                                    borderRadius: '50%',
+                                                    overflow: 'hidden',
+                                                    border: '3px solid #1E466E',
+                                                    backgroundColor: '#E5E7EB',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
+                                            >
+                                                <img
+                                                    src={''}
+                                                    alt="صورة المستخدم"
+                                                    style={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                    }}
+                                                    onError={(e) => {
+                                                        (e.currentTarget as HTMLImageElement).src =
+                                                            'https://ui-avatars.com/api/?name=' +
+                                                            encodeURIComponent(firstName || 'User') +
+                                                            '&background=1E466E&color=fff';
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div style={{ width: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch' }} />
+
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', flex: 1, textAlign: 'right' }}>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>الاسم الاول</label>
+                                                <input
+                                                    type="text"
+                                                    value={firstName}
+                                                    onChange={(e) => setFirstName(e.target.value)}
+
+                                                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '8px' }}>الاسم الاخير</label>
+                                                <input
+                                                    type="text"
+                                                    value={lastName}
+                                                    onChange={(e) => setLastName(e.target.value)}
+
+                                                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', boxSizing: 'border-box' }}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
+                                                    البريد الإلكتروني
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    style={{
+                                                        color: '#1E466E',
+
+                                                        width: '100%',
+                                                        padding: '10px 14px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #D1D5DB',
+                                                        fontSize: '14px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020203', marginBottom: '8px' }}>
+                                                    رقم الهاتف
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    value={phoneNumber}
+                                                    onChange={(e) => setPhone(e.target.value)}
+                                                    style={{
+                                                        color: '#1E466E',
+                                                        width: '100%',
+                                                        padding: '10px 14px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #D1D5DB',
+                                                        fontSize: '14px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                        direction: 'ltr',
+                                                        textAlign: 'right',
+                                                    }}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
+                                                    حالة المستخدم
+                                                </label>
+                                                <select
+                                                    value={userStatus}
+                                                    onChange={(e) => setUserStatus(e.target.value)}
+
+                                                    style={{
+                                                        color: '#1E466E',
+                                                        width: '100%',
+                                                        padding: '10px 14px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #D1D5DB',
+                                                        fontSize: '14px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                        backgroundColor: '#ffffff',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                >
+                                                    <option value=""> {'اختار الحالة'} </option>
+                                                    {userStatuses.map((item) => (
+                                                        <option key={item.value} value={item.value} disabled={item.disabled}>
+                                                            {item.text}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020303', marginBottom: '8px' }}>
+                                                    نوع المستخدم
+                                                </label>
+                                                <select
+                                                    value={userType}
+                                                    onChange={(e) => setUserType(e.target.value)}
+                                                    style={{
+                                                        color: '#1E466E',
+                                                        width: '100%',
+                                                        padding: '10px 14px',
+                                                        borderRadius: '8px',
+                                                        border: '1px solid #D1D5DB',
+                                                        fontSize: '14px',
+                                                        outline: 'none',
+                                                        boxSizing: 'border-box',
+                                                    }}
+                                                >
+                                                    <option value=""> {'اختار نوع المستخدم'} </option>
+                                                    {userTypes.map((item) => (
+                                                        <option key={item.value} value={item.value} disabled={item.disabled}>
+                                                            {item.text}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
+
+                                        <div style={{ marginTop: '5px', paddingTop: '16px' }}>
+                                            <h3 style={{ gridColumn: '1 / -1', color: '#919191d6', fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '16px' }}>
+                                                كلمة المرور
+                                            </h3>
+
+                                            {passMessage && (
+                                                <div
+                                                    style={{
+                                                        padding: '10px 14px',
+                                                        borderRadius: '6px',
+                                                        marginBottom: '16px',
+                                                        fontSize: '14px',
+                                                        textAlign: 'right',
+                                                        backgroundColor: passMessage.type === 'success' ? '#DEF7EC' : '#FDE8E8',
+                                                        color: passMessage.type === 'success' ? '#03543F' : '#9B1C1C',
+                                                    }}
+                                                >
+                                                    {passMessage.text}
+                                                </div>
+                                            )}
+
+                                            <div
+                                                style={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: 'repeat(2, 1fr)',
+                                                    gap: '16px',
+                                                    textAlign: 'right',
+                                                    width: '100%',
+                                                }}
+
+                                            >
+
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
+                                                        كلمة مرور جديده
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        placeholder="••••••••"
+                                                        style={{
+                                                            color: '#1E466E',
+                                                            width: '100%',
+                                                            padding: '10px 14px',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid #D1D5DB',
+                                                            fontSize: '14px',
+                                                            outline: 'none',
+                                                            boxSizing: 'border-box',
+                                                            textAlign: 'right',
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <div>
+                                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
+                                                        تأكيد كلمة المرور
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={confirmPassword}
+                                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                                        placeholder="••••••••"
+                                                        style={{
+                                                            color: '#1E466E',
+                                                            width: '100%',
+                                                            padding: '10px 14px',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid #D1D5DB',
+                                                            fontSize: '14px',
+                                                            outline: 'none',
+                                                            boxSizing: 'border-box',
+                                                            textAlign: 'right',
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '10px', gridColumn: '1 / -1', gap: '10px' }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', width: '100%' }}>
+                                                        <button
+                                                            type="submit"
+                                                            disabled={isSaving}
+                                                            style={{
+                                                                backgroundColor: '#1E466E',
+                                                                color: '#ffffff',
+                                                                padding: '10px 24px',
+                                                                borderRadius: '8px',
+                                                                border: 'none',
+                                                                fontSize: '14px',
+                                                                fontWeight: '500',
+                                                                cursor: isSaving ? 'not-allowed' : 'pointer',
+                                                                opacity: isSaving ? 0.7 : 1,
+                                                            }}
+                                                        >
+                                                            {isSaving ? 'جاري الحفظ...' : 'انشاء '}
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         </AppLayout>
     );
