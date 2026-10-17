@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import AppLayout from '../../components/AppLayout'
 import './AccountManagement.css'
 import { getUserById, changePassword } from '../../services/userService'
-import Cookies from 'js-cookie';
 import { authenticatedFetch } from '../../services/authService';
 
 interface UserItem {
@@ -25,6 +24,36 @@ interface DropdownItem {
     text: string;
     value: string;
 }
+
+const getUserTypeLabel = (type: number): string => {
+    switch (type) {
+        case 0: return 'مدير (Admin)';
+        case 1: return 'مستخدم (User)';
+        case 2: return 'مشرف (Supervisor)';
+        default: return 'غير محدد';
+    }
+};
+
+const getUserStatusLabel = (status: number): string => {
+    switch (status) {
+        case 0: return 'غير نشط (Inactive)';
+        case 1: return 'فعال (Active)';
+        case 2: return 'معلق (Pending)';
+        default: return 'غير محدد';
+    }
+};
+
+const userTypeMap: Record<string, number> = {
+    SysAdmin: 0,
+    OrgAdmin: 1,
+    Support: 2,
+};
+
+const userStatusMap: Record<string, number> = {
+    Inactive: 0,
+    Active: 1,
+    Suspended: 2,
+};
 
 type AccountManagementScreenProps = {
     userName?: string
@@ -63,6 +92,34 @@ export default function AccountsPage(
     const [selectedUserId, setSelectedUserId] = useState<string | number>('');
     const [existingPassword, setExistingPassword] = useState('');
 
+    const getUserTypeLabel = (type: number | string): string => {
+        if (typeof type === 'string') {
+            const option = userTypes.find(item => item.value === type);
+            if (option) return option.text;
+        }
+
+        switch (Number(type)) {
+            case 0: return 'مدير (Admin)';
+            case 1: return 'مستخدم (User)';
+            case 2: return 'مشرف (Supervisor)';
+            default: return 'غير محدد';
+        }
+    };
+
+    const getUserStatusLabel = (status: number | string): string => {
+        if (typeof status === 'string') {
+            const option = userStatuses.find(item => item.value === status);
+            if (option) return option.text;
+        }
+
+        switch (Number(status)) {
+            case 0: return 'غير نشط (Inactive)';
+            case 1: return 'فعال (Active)';
+            case 2: return 'معلق (Pending)';
+            default: return 'غير محدد';
+        }
+    };
+
     const getUsers = async () => {
 
         const response = await authenticatedFetch('/api/v1/admin/users',
@@ -78,31 +135,7 @@ export default function AccountsPage(
         const result = await response.json();
         return result;
     };
-    const getUserTypeLabel = (type: number): string => {
-        switch (type) {
-            case 0:
-                return 'مدير (Admin)';
-            case 1:
-                return 'مستخدم (User)';
-            case 2:
-                return 'مشرف (Supervisor)';
-            default:
-                return 'غير محدد';
-        }
-    };
 
-    const getUserStatusLabel = (status: number): string => {
-        switch (status) {
-            case 0:
-                return 'غير نشط (Inactive)';
-            case 1:
-                return 'فعال (Active)';
-            case 2:
-                return 'معلق (Pending)';
-            default:
-                return 'غير محدد';
-        }
-    };
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -167,9 +200,8 @@ export default function AccountsPage(
                     setLastName(profileData.lastName || '');
                     setEmail(profileData.email || '');
                     setPhone(profileData.phoneNumber || '');
-                    setUserType(getUserTypeLabel(profileData.userType));
-                    setUserStatus(getUserStatusLabel(profileData.userStatus));
-
+                    setUserType(profileData.userType);
+                    setUserStatus(profileData.userStatus);
                     setProfileImage(profileData.profileImage || '');
 
                 }
@@ -185,12 +217,34 @@ export default function AccountsPage(
         };
 
         fetchUserData();
+
+
+
     }, [isModalOpen, selectedUserId]);
+
+    const handleaddingaccount = () => {
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setUserStatus('');
+        setUserType('');
+        setIsAddModalOpen(true)
+    };
 
 
     const AddAccount = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage(null);
+
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setUserStatus('');
+        setUserType('');
 
         if (password !== confirmPassword) {
             setMessage({ type: 'error', text: 'كلمة المرور وتأكيد كلمة المرور غير متطابقين.' });
@@ -203,8 +257,8 @@ export default function AccountsPage(
                 profile: {
                     firstName: firstName,
                     lastName: lastName,
-                    userType: selectedUserType !== '' ? userType : 0,
-                    userStatus: selectedUserStatus !== '' ? userStatus : 1,
+                    userType: userTypeMap[userType],
+                    userStatus: userStatusMap[userStatus],
                     note: note || 'New Account Note',
                     email: email,
                     phoneNumber: phoneNumber,
@@ -257,11 +311,13 @@ export default function AccountsPage(
             }
 
             setMessage({ type: 'success', text: 'تم اضافة الحساب بنجاح!' });
+            setIsAddModalOpen(false)
 
         } catch (error: any) {
             console.error('Error saving changes:', error);
             setMessage({ type: 'error', text: error.message || 'حدث خطأ أثناء اضافة الحساب.' });
         }
+        
     };
 
 
@@ -274,32 +330,30 @@ export default function AccountsPage(
         setMessage(null);
 
         try {
-            if (newPassword?.trim()) {
-                await changePassword({
-                    email,
-                    newPassword,
-                    confirmPassword,
-                });
-            }
+            const passwordToSubmit = newPassword && newPassword.trim() !== ""
+                ? newPassword
+                : existingPassword;
 
             const requestData = {
                 profile: {
-                    firstName,
-                    lastName,
-                    userType,
-                    userStatus,
+                    userID: userId,
+                    firstName: firstName,
+                    lastName: lastName,
+                    userType: userType === '' ? undefined : userType,
+                    userStatus:  userStatus === '' ? undefined : userStatus,
                     note: 'note',
-                    email,
-                    phoneNumber,
+                    email: email,
+                    phoneNumber: phoneNumber,
                 },
                 isSupport: false,
-                password: newPassword,
+                password: passwordToSubmit,
                 uiRootPath: null,
             };
 
             const formData = new FormData();
             formData.append('data', JSON.stringify(requestData));
             formData.append('profileImageFile', '');
+            console.log(formData, requestData)
 
             const response = await authenticatedFetch(
                 `/api/v1/admin/users/${userId}`,
@@ -315,11 +369,13 @@ export default function AccountsPage(
             if (!response.ok) {
                 throw new Error(responseText || 'فشل حفظ التغييرات');
             }
-
+            if (response.ok){
             setMessage({
                 type: 'success',
                 text: 'تم حفظ التغييرات بنجاح!',
             });
+            setIsModalOpen(false)
+        }
         } catch (error: unknown) {
             console.error('Error saving changes:', error);
 
@@ -345,10 +401,10 @@ export default function AccountsPage(
     const handleDeleteAccount = async (id: string | number) => {
         const confirmed = window.confirm("هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.");
         if (!confirmed) return;
-
+        id = selectedUserId;
         try {
             setIsSaving(true);
-            const response = await authenticatedFetch(`/api/v1/admin/users/${selectedUserId}`, {
+            const response = await authenticatedFetch(`/api/v1/admin/users/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -363,7 +419,7 @@ export default function AccountsPage(
             }
 
             alert('تم حذف الحساب بنجاح');
-
+            setIsModalOpen(false)
 
 
         } catch (error: any) {
@@ -387,7 +443,7 @@ export default function AccountsPage(
                 <div className="accounts-header-card">
                     <h1 className="accounts-title">إدارة الحسابات</h1>
 
-                    <button onClick={() => setIsAddModalOpen(true)} className="accounts-add-btn">
+                    <button onClick={() => handleaddingaccount()} className="accounts-add-btn">
                         <span>+</span>
                         <span>إضافة حساب</span>
                     </button>
@@ -432,6 +488,7 @@ export default function AccountsPage(
 
                                         const isLast = index === users.length - 1;
 
+
                                         return (
                                             <tr
                                                 key={user.userID || index}
@@ -447,13 +504,15 @@ export default function AccountsPage(
 
                                                 <td className="accounts-td">
                                                     <span className="accounts-badge accounts-type-badge">
-                                                        {getUserTypeLabel(user.userType || 0)}
+                                                        {getUserTypeLabel(Number(user.userType))}
                                                     </span>
                                                 </td>
 
                                                 <td className="accounts-td">
                                                     <span className="accounts-badge accounts-status-badge">
-                                                        {getUserStatusLabel(user.userStatus || 1)}
+
+                                                        {getUserStatusLabel(Number(user.userStatus))}
+
                                                     </span>
                                                 </td>
 
@@ -508,7 +567,7 @@ export default function AccountsPage(
                                 </button>
                             </div>
 
-                            <form onSubmit={(e) => handleSave(e, userID)} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
+                            <form onSubmit={(e) => handleSave(e, selectedUserId)} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
 
 
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
@@ -631,9 +690,11 @@ export default function AccountsPage(
                                                 حالة المستخدم
                                             </label>
                                             <select
-                                                value={userStatus}
-                                                onChange={(e) => setUserStatus(Number(e.target.value))}
-
+                                                value={getUserStatusLabel(Number(userStatus))}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setUserStatus(value === '' ? '' : Number(value));
+                                                }}
                                                 style={{
                                                     color: '#1E466E',
                                                     width: '100%',
@@ -647,9 +708,11 @@ export default function AccountsPage(
                                                     cursor: 'pointer',
                                                 }}
                                             >
-                                                <option value=""> {userStatus} </option>
+                                                <option value={getUserStatusLabel(Number(userStatus))} disabled>
+                                                    {getUserStatusLabel(Number(userStatus))}
+                                                </option>
                                                 {userStatuses.map((item) => (
-                                                    <option key={item.value} value={item.value} disabled={item.disabled}>
+                                                    <option key={item.value} value={userStatusMap[item.value]} disabled={item.disabled}>
                                                         {item.text}
                                                     </option>
                                                 ))}
@@ -661,9 +724,11 @@ export default function AccountsPage(
                                                 نوع المستخدم
                                             </label>
                                             <select
-                                                value={userType}
-                                                onChange={(e) => setUserType(Number(e.target.value))}
-                                                style={{
+                                                value={getUserTypeLabel(Number(userType))}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    setUserType(value === '' ? '' : Number(value));
+                                                }} style={{
                                                     color: '#1E466E',
                                                     width: '100%',
                                                     padding: '10px 14px',
@@ -674,9 +739,12 @@ export default function AccountsPage(
                                                     boxSizing: 'border-box',
                                                 }}
                                             >
-                                                <option value=""> {userType} </option>
+                                                <option value={getUserTypeLabel(Number(userType))} disabled>
+                                                    {getUserTypeLabel(Number(userType))}
+
+                                                </option>
                                                 {userTypes.map((item) => (
-                                                    <option key={item.value} value={item.value} disabled={item.disabled}>
+                                                    <option key={item.value} value={userTypeMap[item.value]} disabled={item.disabled}>
                                                         {item.text}
                                                     </option>
                                                 ))}
@@ -684,7 +752,7 @@ export default function AccountsPage(
                                         </div>
 
                                     </div>
-                                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px'}} />
+                                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch', margin: '16px' }} />
 
                                     <div style={{ marginTop: '0px' }}>
                                         <h3 style={{ gridColumn: '1 / -1', color: '#919191d6', fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '16px' }}>
@@ -723,8 +791,8 @@ export default function AccountsPage(
                                                     كلمة مرور جديده
                                                 </label>
                                                 <input
-                                                    type="text"
-                                                    value={''}
+                                                    type="password"
+                                                    value={password}
                                                     onChange={(e) => setNewPassword(e.target.value)}
                                                     placeholder="••••••••"
                                                     style={{
@@ -746,8 +814,8 @@ export default function AccountsPage(
                                                     تأكيد كلمة المرور
                                                 </label>
                                                 <input
-                                                    type="text"
-                                                    value={''}
+                                                    type="password"
+                                                    value={password}
                                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                                     placeholder="••••••••"
                                                     style={{
@@ -820,7 +888,8 @@ export default function AccountsPage(
 
                         </div>
                     </div>
-                )}
+                )
+                }
 
                 {
                     isaddModalOpen && (
@@ -859,52 +928,6 @@ export default function AccountsPage(
 
                                 <form onSubmit={(e) => AddAccount(e)} style={{ display: 'flex', flexDirection: 'row', gap: '24px', alignItems: 'start' }}>
 
-
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
-
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                paddingTop: '10px',
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    width: '100px',
-                                                    height: '100px',
-                                                    borderRadius: '50%',
-                                                    overflow: 'hidden',
-                                                    border: '3px solid #1E466E',
-                                                    backgroundColor: '#E5E7EB',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                }}
-                                            >
-                                                <img
-                                                    src={''}
-                                                    alt="صورة المستخدم"
-                                                    style={{
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        objectFit: 'cover',
-                                                    }}
-                                                    onError={(e) => {
-                                                        (e.currentTarget as HTMLImageElement).src =
-                                                            'https://ui-avatars.com/api/?name=' +
-                                                            encodeURIComponent(firstName || 'User') +
-                                                            '&background=1E466E&color=fff';
-                                                    }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div style={{ width: '1px', backgroundColor: '#E5E7EB', alignSelf: 'stretch' }} />
 
                                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', flex: 1, textAlign: 'right' }}>
@@ -1022,7 +1045,7 @@ export default function AccountsPage(
                                                         boxSizing: 'border-box',
                                                     }}
                                                 >
-                                                    <option value=""> {'اختار نوع المستخدم'} </option>
+                                                    <option value="userType"> {'اختار نوع المستخدم'} </option>
                                                     {userTypes.map((item) => (
                                                         <option key={item.value} value={item.value} disabled={item.disabled}>
                                                             {item.text}
@@ -1068,10 +1091,10 @@ export default function AccountsPage(
 
                                                 <div>
                                                     <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#020202', marginBottom: '8px' }}>
-                                                        كلمة مرور جديده
+                                                        كلمة مرور
                                                     </label>
                                                     <input
-                                                        type="text"
+                                                        type="password"
                                                         value={password}
                                                         onChange={(e) => setPassword(e.target.value)}
                                                         placeholder="••••••••"
@@ -1094,7 +1117,7 @@ export default function AccountsPage(
                                                         تأكيد كلمة المرور
                                                     </label>
                                                     <input
-                                                        type="text"
+                                                        type="password"
                                                         value={confirmPassword}
                                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                                         placeholder="••••••••"
@@ -1146,7 +1169,7 @@ export default function AccountsPage(
                         </div>
                     )
                 }
-            </div>
-        </AppLayout>
+            </div >
+        </AppLayout >
     );
 }

@@ -1,7 +1,7 @@
 import { authenticatedFetch } from './authService'
 
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (userId: number | string) => {
 
     if (!userId) {
         throw new Error('لم يتم العثور على المعرف userID');
