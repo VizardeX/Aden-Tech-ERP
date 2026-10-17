@@ -1,0 +1,144 @@
+.accounts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.accounts-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #E5E7EB;
+}
+
+.accounts-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1E466E;
+  margin: 0;
+}
+
+.accounts-add-btn {
+  background-color: #29B4B9;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.accounts-add-btn:hover {
+  background-color: #239c9f;
+}
+
+.accounts-loading {
+  text-align: center;
+  padding: 40px;
+  color: #6B7280;
+}
+
+.accounts-error {
+  background-color: #FDE8E8;
+  color: #9B1C1C;
+  padding: 14px 20px;
+  border-radius: 8px;
+  text-align: right;
+  font-size: 14px;
+}
+
+.accounts-table-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid #E5E7EB;
+  overflow: hidden;
+}
+
+.accounts-empty {
+  text-align: center;
+  padding: 40px;
+  color: #9CA3AF;
+}
+
+.accounts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: right;
+}
+
+.accounts-th-row {
+  background-color: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.accounts-th {
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.accounts-td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #374151;
+  vertical-align: middle;
+}
+
+.accounts-border-bottom {
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.accounts-user-name {
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.accounts-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.accounts-type-badge {
+  background-color: #E0F2FE;
+  color: #0369A1;
+}
+
+.accounts-status-badge {
+  background-color: #DEF7EC;
+  color: #03543F;
+}
+
+.accounts-details-btn {
+  background-color: #1E466E;
+  color: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.accounts-details-btn:hover {
+  opacity: 0.9;
+}
+
+.accounts-text-center {
+  text-align: center;
+}

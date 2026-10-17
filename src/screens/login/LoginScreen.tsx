@@ -4,6 +4,7 @@ import mainLogo from '../../assets/MainLogo.png'
 import './LoginScreen.css'
 import { useTranslation } from 'react-i18next'
 import { saveTokens, saveUserID } from '../../services/authService'
+import Cookies from 'js-cookie'
 
 type LoginScreenProps = {
   language: 'en' | 'ar'
