@@ -5,6 +5,8 @@ import ExchangeRatesScreen from '../exchange-rates/ExchangeRatesScreen'
 import LedgerPeriodsScreen from '../ledger-periods/LedgerPeriodsScreen'
 import TenantDataScreen from '../tenant-data/TenantDataScreen'
 import AccountManagement from '../Account-Management/AccountManagement'
+import TaxCategories from '../Tax-Category/TaxCategories'
+import TaxReports from '../Tax-Reports/TaxReports'
 import './MainScreen.css'
 
 type MainScreenProps = {
@@ -13,9 +15,9 @@ type MainScreenProps = {
 }
 
 function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
-  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData' | 'AccountManagement'>('chartOfAccounts')
+  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData' | 'AccountManagement' | 'TaxCategories' | 'TaxReports'>('chartOfAccounts')
   const handleNavigationChange = (navigation: string) => {
-    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData' || navigation === 'AccountManagement') {
+    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData' || navigation === 'AccountManagement' || navigation === 'TaxCategories'|| navigation === 'TaxReports') {
       setCurrentScreen(navigation)
     }
   }
@@ -33,6 +35,26 @@ function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
   if (currentScreen === 'AccountManagement') {
     return (
       <AccountManagement
+        userName={loggedInEmail}
+        onLogout={onLogout}
+        onNavigationChange={handleNavigationChange}
+      />
+    )
+  }
+
+    if (currentScreen === 'TaxCategories') {
+    return (
+      <TaxCategories
+        userName={loggedInEmail}
+        onLogout={onLogout}
+        onNavigationChange={handleNavigationChange}
+      />
+    )
+  }
+
+   if (currentScreen === 'TaxReports') {
+    return (
+      <TaxReports
         userName={loggedInEmail}
         onLogout={onLogout}
         onNavigationChange={handleNavigationChange}

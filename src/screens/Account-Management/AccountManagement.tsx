@@ -80,8 +80,8 @@ export default function AccountsPage(
     const [userStatuses, setUserStatuses] = useState<DropdownItem[]>([]);
     const [userType, setUserType] = useState<string | number>('');
     const [userStatus, setUserStatus] = useState<string | number>('');
-    const [selectedUserType, setSelectedUserType] = useState<string | number>('');
-    const [selectedUserStatus, setSelectedUserStatus] = useState<string | number>('');
+    //const [selectedUserType, setSelectedUserType] = useState<string | number>('');
+   // const [selectedUserStatus, setSelectedUserStatus] = useState<string | number>('');
     const [profileImage, setProfileImage] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [newPassword, setNewPassword] = useState('');
@@ -238,14 +238,6 @@ export default function AccountsPage(
         e.preventDefault();
         setMessage(null);
 
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-        setUserStatus('');
-        setUserType('');
-
         if (password !== confirmPassword) {
             setMessage({ type: 'error', text: 'كلمة المرور وتأكيد كلمة المرور غير متطابقين.' });
             return;
@@ -317,7 +309,7 @@ export default function AccountsPage(
             console.error('Error saving changes:', error);
             setMessage({ type: 'error', text: error.message || 'حدث خطأ أثناء اضافة الحساب.' });
         }
-        
+
     };
 
 
@@ -334,13 +326,30 @@ export default function AccountsPage(
                 ? newPassword
                 : existingPassword;
 
+            if (newPassword && confirmPassword) {
+
+                if (newPassword !== confirmPassword) {
+                    console.error("كلمتا المرور غير متطابقتين!");
+                    return;
+                }
+
+                const payload = {
+                    email,
+                    newPassword,
+                    confirmPassword
+                };
+
+                changePassword(payload);
+            } 
+
+
             const requestData = {
                 profile: {
                     userID: userId,
                     firstName: firstName,
                     lastName: lastName,
                     userType: userType === '' ? undefined : userType,
-                    userStatus:  userStatus === '' ? undefined : userStatus,
+                    userStatus: userStatus === '' ? undefined : userStatus,
                     note: 'note',
                     email: email,
                     phoneNumber: phoneNumber,
@@ -369,13 +378,13 @@ export default function AccountsPage(
             if (!response.ok) {
                 throw new Error(responseText || 'فشل حفظ التغييرات');
             }
-            if (response.ok){
-            setMessage({
-                type: 'success',
-                text: 'تم حفظ التغييرات بنجاح!',
-            });
-            setIsModalOpen(false)
-        }
+            if (response.ok) {
+                setMessage({
+                    type: 'success',
+                    text: 'تم حفظ التغييرات بنجاح!',
+                });
+                setIsModalOpen(false)
+            }
         } catch (error: unknown) {
             console.error('Error saving changes:', error);
 

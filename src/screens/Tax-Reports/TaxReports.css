@@ -1,0 +1,124 @@
+.tax-reports-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.report-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+}
+
+
+.filter-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #444;
+}
+
+.period-select {
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    min-width: 180px;
+    outline: none;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.period-select:focus {
+    border-color: #1E466E;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+
+.btn-display {
+    padding: 8px 16px;
+    background: #1E466E;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-display:hover {
+    background: #239c9f;
+}
+
+
+.btn-clear {
+    padding: 8px 16px;
+    background: #a5b0b9;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-clear:hover {
+    background: #1E466E;
+}
+
+
+.stats-cards-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.stat-card {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    flex: 1;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-loading {
+    font-size: 16px;
+    color: #007bff;
+}

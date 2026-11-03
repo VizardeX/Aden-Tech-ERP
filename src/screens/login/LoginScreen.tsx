@@ -82,7 +82,7 @@ function LoginScreen({ language, onSwitchLanguage, onLoginSuccess }: LoginScreen
       })
 
       const loginText = await loginResponse.text()
-
+      
       if (!loginResponse.ok) {
         setError(`Login failed: ${loginText || loginResponse.statusText}`)
         return
