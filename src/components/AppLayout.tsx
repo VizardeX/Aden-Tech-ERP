@@ -66,7 +66,7 @@ const settingsItems = [
 
 const TaxItems = [
   { label: 'فئات ومعدلات الضرائب', value: 'TaxCategories' },
-  { label: ' تقارير  ', value: 'TaxReports' } 
+  { label: ' تقارير التحقق الضريبي  ', value: 'TaxReports' } 
 ]
 
 function AppLayout({
