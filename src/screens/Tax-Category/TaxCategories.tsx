@@ -44,8 +44,6 @@ export default function TaxCategories(
     { userName, onLogout, onNavigationChange }: TaxCategoriesScreenProps
 ) {
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [isExpanded, setIsExpanded] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<TaxCategory | null>(null);
     const [selectedTypeCategory, setSelectedTypeCategory] = useState<CategoryType | null>(null);
     const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
@@ -58,8 +56,7 @@ export default function TaxCategories(
     const [isAddRateModalOpen, setIsAddRateModalOpen] = useState(false);
     const [CatName, setCatName] = useState('');
     const [CatType, setCatType] = useState<number | null>(null);
-    const [isSaving, setIsSaving] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSaving] = useState(false);
     const [RateName, setRateName] = useState('');
     const [RatePercentage, setRatePercentage] = useState(0);
     const [ledgerIdState, setLedgerIdState] = useState<string>("01a0c0f6-479b-7798-9361-127f78b8d525");
@@ -96,6 +93,7 @@ export default function TaxCategories(
                 const initialTypes = typesData.categoriesTypes || typesData;
                 if (Array.isArray(initialTypes) && initialTypes.length > 0) {
                     setSelectedTypeCategory(initialTypes[0]);
+                    console.log(selectedTypeCategory)
                 }
 
                 try {
@@ -198,6 +196,7 @@ export default function TaxCategories(
 
             setMessage({ type: 'success', text: 'تم الاضافة بنجاح!' });
             alert('تم الاضافة بنجاح!');
+            console.log(message)
             setIsAddCatModalOpen(false)
 
         } catch (error: any) {
@@ -361,7 +360,7 @@ export default function TaxCategories(
                             <ul className="tax-list">
                                 {Array.isArray(taxCategories) && taxCategories.map((cat) => {
                                     const isSelected = SelectedCategoryId === cat.id;
-
+                                    {loading ? 'جاري التحميل...' : 'عرض (Display)'}
                                     return (
                                         <li
                                             key={cat.id}

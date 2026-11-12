@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import AppLayout from '../../components/AppLayout'
 import './TaxReports.css'
-import React from 'react';
 import { authenticatedFetch } from '../../services/authService';
 
 type TaxReportsScreenProps = {
@@ -19,9 +18,6 @@ export default function TaxReports({ userName, onLogout, onNavigationChange }: T
 
 
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [selectedPeriodStart, setSelectedPeriodStart] = useState('');
-    const [selectedPeriodEnd, setSelectedPeriodEnd] = useState('');
     const [showCards, setShowCards] = useState<boolean>(false);
     const [statsData, setStatsData] = useState<StatItem[]>([
         { label: 'إجمالي ضريبة المخرجات (Output VAT)', value: '---' },
@@ -32,7 +28,7 @@ export default function TaxReports({ userName, onLogout, onNavigationChange }: T
     const generateFinancialYears = (numberOfYears = 5) => {
         const currentYear = new Date().getFullYear();
         const yearsList = [];
-        const now = new Date().toISOString();
+       // const now = new Date().toISOString();
 
         for (let i = 0; i < numberOfYears; i++) {
             const startYear = currentYear - i;
@@ -84,7 +80,7 @@ export default function TaxReports({ userName, onLogout, onNavigationChange }: T
     };
 
     const handleDisplayReport = async (
-        periodStart: string, periodEnd: string
+       // periodStart: string, periodEnd: string
     ) => {
 
         if (!selectedPeriod.periodStart) {
@@ -118,7 +114,7 @@ export default function TaxReports({ userName, onLogout, onNavigationChange }: T
             <div className="tax-reports-screen">
                 <form onSubmit={(e) => {
                     e.preventDefault();
-                    handleDisplayReport(selectedPeriod.periodStart, selectedPeriod.periodEnd);
+                    handleDisplayReport();
                 }} className="report-filter-form">
 
 

@@ -25,23 +25,23 @@ interface DropdownItem {
     value: string;
 }
 
-const getUserTypeLabel = (type: number): string => {
+{/*const getUserTypeLabel = (type: number): string => {
     switch (type) {
         case 0: return 'مدير (Admin)';
         case 1: return 'مستخدم (User)';
         case 2: return 'مشرف (Supervisor)';
         default: return 'غير محدد';
     }
-};
+};*/}
 
-const getUserStatusLabel = (status: number): string => {
+{/*const getUserStatusLabel = (status: number): string => {
     switch (status) {
         case 0: return 'غير نشط (Inactive)';
         case 1: return 'فعال (Active)';
         case 2: return 'معلق (Pending)';
         default: return 'غير محدد';
     }
-};
+};*/}
 
 const userTypeMap: Record<string, number> = {
     SysAdmin: 0,
@@ -67,7 +67,7 @@ export default function AccountsPage(
     const [users, setUsers] = useState<UserItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [userID, setUserID] = useState<number>(0);
+    //const [userID, setUserID] = useState<number>(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isaddModalOpen, setIsAddModalOpen] = useState(false);
     const [firstName, setFirstName] = useState('');
@@ -75,7 +75,7 @@ export default function AccountsPage(
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phoneNumber, setPhone] = useState('');
-    const [note, setNote] = useState('');
+    const [note] = useState('');
     const [userTypes, setUserTypes] = useState<DropdownItem[]>([]);
     const [userStatuses, setUserStatuses] = useState<DropdownItem[]>([]);
     const [userType, setUserType] = useState<string | number>('');
@@ -86,11 +86,11 @@ export default function AccountsPage(
     const [isSaving, setIsSaving] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [passMessage, setPassMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [passMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | number>('');
-    const [existingPassword, setExistingPassword] = useState('');
+    const [existingPassword] = useState('');
 
     const getUserTypeLabel = (type: number | string): string => {
         if (typeof type === 'string') {
@@ -211,6 +211,8 @@ export default function AccountsPage(
             } catch (error) {
                 console.error(' خطأ في جلب بيانات المستخدم:', error);
                 setMessage({ type: 'error', text: 'تعذر جلب بيانات الحساب.' });
+                console.log(message);
+                console.log(isLoading);
             } finally {
                 setIsLoading(false);
             }

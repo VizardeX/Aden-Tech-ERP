@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import mainLogo from '../assets/MainLogo.png'
 import './AppLayout.css'
 import { getUserById, changePassword } from '../services/userService'
-import { authenticatedFetch, getUserID } from '../services/authService';
+import { getUserID } from '../services/authService';
 
 
 type AppLayoutProps = {
@@ -15,7 +15,7 @@ type AppLayoutProps = {
   onLogout?: () => void
 }
 
-interface UserItem {
+{/* interface UserItem {
   userID: number;
   firstName?: string;
   lastName?: string;
@@ -26,7 +26,7 @@ interface UserItem {
   userType?: number;
   userStatus?: number;
   profileImage?: string;
-}
+}*/}
 
 const userTypeMap: Record<string, number> = {
   SysAdmin: 0,
@@ -84,11 +84,10 @@ function AppLayout({
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password] = useState('');
   const [phoneNumber, setPhone] = useState('');
-  const [note, setNote] = useState('');
-  const [userTypes, setUserTypes] = useState<DropdownItem[]>([]);
-  const [userStatuses, setUserStatuses] = useState<DropdownItem[]>([]);
+  const [userTypes] = useState<DropdownItem[]>([]);
+  const [userStatuses] = useState<DropdownItem[]>([]);
   const [userType, setUserType] = useState<string | number>('');
   const [userStatus, setUserStatus] = useState<string | number>('');
   const [profileImage, setProfileImage] = useState('');
@@ -97,7 +96,7 @@ function AppLayout({
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedUserId, setSelectedUserId] = useState<string | number>('');
-  const [passMessage, setPassMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [passMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const userID = getUserID();
 
@@ -133,7 +132,7 @@ function AppLayout({
   useEffect(() => {
     const fetchUserData = async () => {
       if (!isUserInfoOpen || !userID) return;
-
+      
 
       try {
         setIsLoading(true);
@@ -159,6 +158,8 @@ function AppLayout({
       } catch (error) {
         console.error(' خطأ في جلب بيانات المستخدم:', error);
         setMessage({ type: 'error', text: 'تعذر جلب بيانات الحساب.' });
+        console.log(message);
+        console.log(isLoading);
       } finally {
         setIsLoading(false);
       }
@@ -178,7 +179,7 @@ function AppLayout({
     e.preventDefault();
     setIsSaving(true);
     setMessage(null);
-
+    console.log(selectedUserId)
 
     if (newPassword && confirmPassword) {
 
@@ -189,12 +190,16 @@ function AppLayout({
 
       const payload = {
         email : pemail,
+        otp:'',
         newPassword: newPassword,
         confirmPassword: confirmPassword
       };
 
-      const response = changePassword(payload);
+      const response = await changePassword(payload);
 
+      if(response !== 200){
+        alert("حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.");
+      }
      
 
       setIsUserInfoOpen(false)
@@ -210,6 +215,7 @@ function AppLayout({
     setIsUserInfoOpen(true);
   };
   return (
+
     <div className={`app-layout${isSidebarCollapsed ? ' app-layout-sidebar-collapsed' : ''}`} dir="rtl" lang="ar">
       <header className="app-topbar">
         <div className="app-identity">
@@ -327,6 +333,7 @@ function AppLayout({
         </main>
       </div>
       {isUserInfoOpen && (
+        
         <div style={{
           position: 'fixed',
           top: 0,
