@@ -1,0 +1,194 @@
+.hs-search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.hs-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+}
+
+.hs-input, .duty-select {
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.hs-input:focus, .duty-select:focus {
+    border-color: #1E466E;
+}
+
+.btn-import {
+    padding: 10px 18px;
+    background-color: #1E466E;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.btn-import:hover {
+    background-color: #239c9f;
+}
+
+.btn-add {
+    padding: 10px 18px;
+    background-color: #239c9f;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #1e466e;
+}
+
+.hs-results-table-container {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    overflow-x: auto;
+}
+
+.hs-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: right;
+    font-size: 14px;
+}
+
+.hs-table th, .hs-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.hs-table th {
+    background-color: #f1f3f5;
+    color: #101010;
+    font-weight: 600;
+}
+
+.hs-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.row-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-details {
+    padding: 6px 12px;
+    background-color: #239c9f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-details:hover {
+    background-color: #1e466e;
+}
+
+.btn-edit {
+    padding: 6px 12px;
+    background-color: #1E466E;
+    color: #fbf9f9;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.btn-edit:hover {
+    background-color: #239c9f;
+}
+
+/* شريط التنقل بين الصفحات (Pagination) */
+.pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-top: 1px solid #eee;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #555;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: #f1f3f5;
+    border-color: #ccc;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-number-badge {
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+}

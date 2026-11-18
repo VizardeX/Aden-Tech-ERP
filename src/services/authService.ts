@@ -104,7 +104,7 @@ export async function authenticatedFetch(input: RequestInfo | URL, init: Request
     if (token) {
       headers.set('Authorization', `Bearer ${token}`)
     }
-    console.log(token)
+   
       if (init.body instanceof FormData) {
     headers.delete('Content-Type');
   }

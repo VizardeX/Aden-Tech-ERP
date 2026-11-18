@@ -60,13 +60,13 @@ const settingsItems = [
   { label: 'أسعار الصرف', value: 'exchangeRates' },
   { label: 'الفترات المحاسبية', value: 'ledgerPeriods' },
   { label: 'بيانات المستأجر', value: 'tenantData' },
-  { label: 'إدارة المستخدمين ', icon: '⚙', value: 'AccountManagement' },
-
+  { label: 'إدارة المستخدمين ', value: 'AccountManagement' },
+  { label: ' HS اكواد ', value: 'HSCodes' },
 ]
 
 const TaxItems = [
   { label: 'فئات ومعدلات الضرائب', value: 'TaxCategories' },
-  { label: ' تقارير التحقق الضريبي  ', value: 'TaxReports' } 
+  { label: ' تقارير التحقق الضريبي  ', value: 'TaxReports' }
 ]
 
 function AppLayout({
@@ -132,7 +132,7 @@ function AppLayout({
   useEffect(() => {
     const fetchUserData = async () => {
       if (!isUserInfoOpen || !userID) return;
-      
+
 
       try {
         setIsLoading(true);
@@ -174,7 +174,7 @@ function AppLayout({
 
   const handleSave = async (
     e: React.FormEvent,
-    pemail: string 
+    pemail: string
   ) => {
     e.preventDefault();
     setIsSaving(true);
@@ -189,18 +189,18 @@ function AppLayout({
       }
 
       const payload = {
-        email : pemail,
-        otp:'',
+        email: pemail,
+        otp: '',
         newPassword: newPassword,
         confirmPassword: confirmPassword
       };
 
       const response = await changePassword(payload);
 
-      if(response !== 200){
+      if (response !== 200) {
         alert("حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة مرة أخرى.");
       }
-     
+
 
       setIsUserInfoOpen(false)
     }
@@ -333,7 +333,7 @@ function AppLayout({
         </main>
       </div>
       {isUserInfoOpen && (
-        
+
         <div style={{
           position: 'fixed',
           top: 0,
@@ -425,7 +425,7 @@ function AppLayout({
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       readOnly
-                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB',backgroundColor: '#F3F4F6', boxSizing: 'border-box', cursor: 'not-allowed', }}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', backgroundColor: '#F3F4F6', boxSizing: 'border-box', cursor: 'not-allowed', }}
                     />
                   </div>
                   <div>
@@ -434,7 +434,7 @@ function AppLayout({
                       type="text"
                       value={lastName}
                       readOnly
-                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB',backgroundColor: '#F3F4F6', boxSizing: 'border-box', cursor: 'not-allowed', }}
+                      style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #D1D5DB', backgroundColor: '#F3F4F6', boxSizing: 'border-box', cursor: 'not-allowed', }}
                     />
                   </div>
 
@@ -532,7 +532,7 @@ function AppLayout({
                         fontSize: '14px',
                         outline: 'none',
                         boxSizing: 'border-box',
-                        cursor : 'not-allowed',
+                        cursor: 'not-allowed',
                       }}
                     >
                       <option value={getUserTypeLabel(Number(userType))} disabled>

@@ -7,6 +7,7 @@ import TenantDataScreen from '../tenant-data/TenantDataScreen'
 import AccountManagement from '../Account-Management/AccountManagement'
 import TaxCategories from '../Tax-Category/TaxCategories'
 import TaxReports from '../Tax-Reports/TaxReports'
+import  HsCode from '../HsCode/HsCode'
 import './MainScreen.css'
 
 type MainScreenProps = {
@@ -15,9 +16,9 @@ type MainScreenProps = {
 }
 
 function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
-  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData' | 'AccountManagement' | 'TaxCategories' | 'TaxReports'>('chartOfAccounts')
+  const [currentScreen, setCurrentScreen] = useState<'chartOfAccounts' | 'currencies' | 'exchangeRates' | 'ledgerPeriods' | 'tenantData' | 'AccountManagement' | 'TaxCategories' | 'TaxReports' | 'HSCodes'>('chartOfAccounts')
   const handleNavigationChange = (navigation: string) => {
-    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData' || navigation === 'AccountManagement' || navigation === 'TaxCategories'|| navigation === 'TaxReports') {
+    if (navigation === 'chartOfAccounts' || navigation === 'currencies' || navigation === 'exchangeRates' || navigation === 'ledgerPeriods' || navigation === 'tenantData' || navigation === 'AccountManagement' || navigation === 'TaxCategories'|| navigation === 'TaxReports' || navigation === 'HSCodes') {
       setCurrentScreen(navigation)
     }
   }
@@ -35,6 +36,16 @@ function MainScreen({ loggedInEmail, onLogout }: MainScreenProps) {
   if (currentScreen === 'AccountManagement') {
     return (
       <AccountManagement
+        userName={loggedInEmail}
+        onLogout={onLogout}
+        onNavigationChange={handleNavigationChange}
+      />
+    )
+  }
+
+  if (currentScreen === 'HSCodes') {
+    return (
+      <HsCode
         userName={loggedInEmail}
         onLogout={onLogout}
         onNavigationChange={handleNavigationChange}
